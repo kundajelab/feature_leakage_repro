@@ -16,7 +16,7 @@ experiment** as its fibroblast-DNase readout:
 
 | multi-task model | fibroblast track | matched ChromBPNet |
 |---|---|---|
-| AlphaGenome | skin-biceps DNase, NTR:0000521 | **ENCSR562ACY** (`chrombpnet_skinbiceps`) |
+| AlphaGenome | skin-biceps fibroblast DNase, NTR:0000521 | **ENCSR562ACY** (`chrombpnet_skinbiceps`) |
 | Enformer / Borzoi | dermis DNase, ENCFF302JEV | **ENCSR000EPO** (`chrombpnet_dermis`) |
 
 ## Panel → script map
