@@ -1,0 +1,16 @@
+# Optional per-machine path overrides for common/config.py.
+#
+# Any key from the config registry can be set here to override the built-in
+# default. Leave a key out (or blank) to use the default. You can also override
+# a single resource with an environment variable, e.g.
+#   export FEATLEAK_HG38_FASTA=/data/hg38.fa
+#
+# The group root (jmschr/, projects/, vir/ live under it) can be re-homed with:
+#   export FEATLEAK_AKUNDAJE_ROOT=/path/to/akundaje
+# and the do-not-touch legacy analysis tree with:
+#   export FEATLEAK_LEGACY_ROOT=/path/to/feat_leakage
+#
+# Examples (uncomment and edit):
+# hg38_fasta: /my/genomes/hg38.fa
+# beluga_weights: /my/models/deepsea.beluga.pth
+# alphagenome_weights_dir: /my/models/alphagenome-v1
