@@ -23,8 +23,7 @@ python run_alphagenome.py --n-loci 200                 # AlphaGenome (featleak-a
 ```
 For OCT-SOX hits 200–500 bp from a fibroblast peak summit, the effect is
 `signal_with_motif − signal_ablated` (summed over all bins of the fibroblast
-DNase track ENCFF302JEV). A **negative** median (with `*` = Wilcoxon repressive)
-is the implausible repression.
+DNase track ENCFF302JEV). 
 
 ## Panels E–H — Beluga, 4 affinity quartiles (`run_beluga.py`, env `featleak-dl`)
 ```bash
