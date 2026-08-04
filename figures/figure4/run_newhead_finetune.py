@@ -135,17 +135,19 @@ NEWHEAD = {
     # clean ~0 null. In the OCT4 direction a from-scratch single-task OCT4 model
     # assigns AP-1 a real repressive (anti-correlation) effect in hESC, which is
     # not spurious leakage, so we omit that confounded control there.
+    # *_disp are the ChIP-target display names used in the violin labels
+    # (the AP-1 motif is the FOS target; the OCT-SOX motif is the OCT4 target).
     "oct4": dict(
         pos_label_col=1, task_name="OCT4",
-        leak_motif=AP1, leak_name="AP-1 (FOS)", leak_short="AP-1",
-        legit_motif=OCT_SOX, legit_name="OCT-SOX",
+        leak_motif=AP1, leak_name="AP-1 (FOS)", leak_short="AP-1", leak_disp="FOS",
+        legit_motif=OCT_SOX, legit_name="OCT-SOX", legit_disp="OCT4",
         own_task_idx=0, own_task_name="FOS", orig_idx=1, orig_name="OCT4",
         single_task_control=False, suffix="",
     ),
     "fos": dict(
         pos_label_col=0, task_name="FOS",
-        leak_motif=OCT_SOX, leak_name="OCT-SOX", leak_short="OCT-SOX",
-        legit_motif=AP1, legit_name="AP-1 (FOS)",
+        leak_motif=OCT_SOX, leak_name="OCT-SOX", leak_short="OCT-SOX", leak_disp="OCT4",
+        legit_motif=AP1, legit_name="AP-1 (FOS)", legit_disp="FOS",
         own_task_idx=1, own_task_name="OCT4", orig_idx=0, orig_name="FOS",
         single_task_control=True, suffix="_fos",
     ),
@@ -365,35 +367,40 @@ def main() -> None:
     print("\n".join(lines))
 
     # --- figure: leak-motif effect across heads (+ single-task) + legit control
-    ls = cfg["leak_short"]
+    # Labels read "<motif> motif effect on <task> ChIP-seq task (<context>)".
+    ld, gd = cfg["leak_disp"], cfg["legit_disp"]
+    own, orig = cfg["own_task_name"], cfg["orig_name"]
     data = [leak_own, leak_orig, leak_new]
-    xlab = [f"{ls} ->\n{cfg['own_task_name']} head\n(real task)",
-            f"{ls} ->\norig {cfg['orig_name']}\nhead",
-            f"{ls} ->\nNEW {tn} head\n(leak)"]
+    xlab = [f"{ld} motif effect on\n{own} ChIP-seq task",
+            f"{ld} motif effect on\n{orig} ChIP-seq task\n(original)",
+            f"{ld} motif effect on\n{tn} ChIP-seq task\n(after finetuning)"]
     cols = ["#55A868", "#8172B3", "#C44E52"]
     if leak_st is not None:
         data.append(leak_st)
-        xlab.append(f"{ls} ->\nsingle-task {tn}\n(from scratch)")
+        xlab.append(f"{ld} motif effect on\n{tn} ChIP-seq task\n(single-task, from scratch)")
         cols.append("#DD8452")
     data.append(legit_new)
-    xlab.append(f"{cfg['legit_name']} ->\nNEW {tn} head\n(legit)")
+    xlab.append(f"{gd} motif effect on\n{tn} ChIP-seq task\n(after finetuning)")
     cols.append("#4C72B0")
-    fig, ax = plt.subplots(figsize=(1.7 * len(data), 5.0))
-    parts = ax.violinplot(data, positions=range(len(data)), widths=0.8, showextrema=False)
+
+    fig, ax = plt.subplots(figsize=(1.95 * len(data) + 0.5, 5.4))
+    parts = ax.violinplot(data, positions=range(len(data)), widths=0.72, showextrema=False)
     for pc, c in zip(parts["bodies"], cols):
-        pc.set_facecolor(c); pc.set_alpha(0.65); pc.set_edgecolor("white")
+        pc.set_facecolor(c); pc.set_alpha(0.80)
+        pc.set_edgecolor("0.25"); pc.set_linewidth(0.8)
     for i, d in enumerate(data):
-        q1, m, q3 = np.percentile(d, [25, 50, 75])
-        ax.vlines(i, q1, q3, color="0.2", lw=5, zorder=3)
-        ax.plot(i, m, "o", color="white", ms=6, zorder=4)
-        ax.text(i, m, f"  {m:+.2f}", va="center", ha="left", fontsize=9)
-    ax.axhline(0, ls="--", color="0.4", lw=1)
-    ax.set_xticks(range(len(data))); ax.set_xticklabels(xlab, fontsize=8.5)
-    ax.set_ylabel("motif marginalization effect (logit)")
-    never_saw = cfg["own_task_name"] if args.new_head == "oct4" else cfg["orig_name"]
-    ax.set_title(f"The {cfg['leak_name']} motif leaks into a new {tn} head fine-tuned only on\n"
-                 f"{tn}-vs-background (the head never saw {never_saw} as a labelled contrast)",
-                 fontsize=10)
+        p2, q1, m, q3, p98 = np.percentile(d, [2.5, 25, 50, 75, 97.5])
+        ax.vlines(i, p2, p98, color="0.2", lw=1.2, zorder=3)          # whisker
+        ax.vlines(i, q1, q3, color="0.2", lw=6, zorder=4)             # IQR box
+        ax.plot(i, m, "o", color="white", ms=6, mec="0.2", mew=0.9, zorder=5)  # median
+        ytxt, va = (p98, "bottom") if m >= 0 else (p2, "top")         # value by the tail
+        ax.text(i + 0.20, ytxt, f"{m:+.2f}", ha="left", va=va, fontsize=11)
+    ax.axhline(0, ls="--", color="0.4", lw=1, zorder=1)
+    ax.set_xticks(range(len(data))); ax.set_xticklabels(xlab, fontsize=10)
+    ax.set_xlim(-0.65, len(data) - 1 + 0.85)
+    ax.set_ylabel("Motif marginalization effect (logits)", fontsize=11)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
     fig.tight_layout()
     stem = f"newhead{cfg['suffix']}_finetune_effect"
     for ext in ("pdf", "png", "svg"):
