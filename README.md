@@ -48,7 +48,7 @@ Every figure script writes its outputs (PDFs + a metrics file) to
 
 ## Environments
 
-Three **new** conda environments (the setup script never touches existing envs):
+Multiple, separate environments have to be set up to reproduce all the results.
 
 | env | stack | used by |
 |-----|-------|---------|
