@@ -222,31 +222,42 @@ def finetune_on_new_head(model, new_idx, pos_loci, neg_loci, log):
 
 
 def attribution_logos(panels, bg_loci, cfg, n=24):
-    """Stacked example ISM logos. `panels` = list of (title, model, motif, target).
+    """Stacked example ISM logos.
 
-    All panels share one y-axis scale so a flat (near-zero) track reads as flat
-    rather than being autoscaled up to look like a motif.
+    `panels` = list of (title, model, motif, target[, group]). Panels sharing the
+    same non-None `group` are drawn on a common y-axis (the larger of the group),
+    so e.g. the leak row and the single-task control row are directly comparable
+    and a flat track reads as flat instead of being autoscaled to look like a
+    motif. Panels with no group autoscale to their own magnitude.
     """
     fig, axes = plt.subplots(len(panels), 1, figsize=(8.5, 2.05 * len(panels)))
     if len(panels) == 1:
         axes = [axes]
-    # First pass: compute all attribution slices to find a common y-range.
-    slices = []
-    for (title, model, motif, tgt) in panels:
+    # First pass: compute all attribution slices + their per-panel magnitudes.
+    slices, groups, mags = [], [], []
+    for p in panels:
+        title, model, motif, tgt = p[0], p[1], p[2], p[3]
+        group = p[4] if len(p) > 4 else None
         X = bg_loci[:n].clone()
         center = 150 - len(motif) // 2
         Xins = substitute(X, motif, start=center)
         model.eval()
         attr = saturation_mutagenesis(model, Xins, target=tgt, verbose=False)
         lo, hi = center - 10, center + len(motif) + 10
-        slices.append(attr.mean(dim=0).cpu().numpy()[:, lo:hi])
-    vmax = max(np.abs(s).sum(axis=0).max() for s in slices)   # tallest stacked column
-    pad = 1.05 * vmax
-    for ax, (title, *_), sl in zip(axes, panels, slices):
+        sl = attr.mean(dim=0).cpu().numpy()[:, lo:hi]
+        slices.append(sl); groups.append(group)
+        mags.append(1.05 * np.abs(sl).sum(axis=0).max())   # tallest stacked column
+    # A grouped panel uses the max magnitude across its group.
+    group_pad = {}
+    for g, m in zip(groups, mags):
+        if g is not None:
+            group_pad[g] = max(group_pad.get(g, 0.0), m)
+    for ax, p, sl, g, m in zip(axes, panels, slices, groups, mags):
         plot_logo(sl, ax=ax)
         ax.axhline(0, color="0.6", lw=0.7)
-        ax.set_ylim(-pad, pad)                                # shared scale
-        ax.set_title(title, fontsize=9.5); ax.set_ylabel("ISM contrib.")
+        pad = group_pad[g] if g is not None else m
+        ax.set_ylim(-pad, pad)
+        ax.set_title(p[0], fontsize=9.5); ax.set_ylabel("ISM contrib.")
     axes[-1].set_xlabel(f"inserted motif +/- 10 bp; mean ISM over {n} background sequences")
     fig.suptitle(f"Example attribution: does the {cfg['leak_name']} motif leak into "
                  f"the new {cfg['task_name']} head?", fontsize=11)
@@ -392,16 +403,18 @@ def main() -> None:
 
     # --- example attribution logos ------------------------------------------
     print("[5] example ISM attribution logos ...")
+    # The leak row and the single-task control row share one y-axis (group
+    # "leak_ctrl") so they are directly comparable at the scale of the larger.
     panels = [
         (f"{cfg['leak_name']} motif -> {cfg['own_task_name']} head  (real task, strong)",
          model, cfg["leak_motif"], cfg["own_task_idx"]),
         (f"{cfg['leak_name']} motif -> NEW {tn} head  (leak: head trained only on {tn})",
-         model, cfg["leak_motif"], new_idx),
+         model, cfg["leak_motif"], new_idx, "leak_ctrl"),
     ]
     if st_model is not None:
         panels.append(
             (f"{cfg['leak_name']} motif -> single-task {tn} from scratch  (control)",
-             st_model, cfg["leak_motif"], 0))
+             st_model, cfg["leak_motif"], 0, "leak_ctrl"))
     panels.append(
         (f"{cfg['legit_name']} motif -> NEW {tn} head  (legitimate {tn} signal, control)",
          model, cfg["legit_motif"], new_idx))
