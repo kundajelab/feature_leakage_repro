@@ -257,8 +257,8 @@ def attribution_logos(panels, bg_loci, cfg, n=24):
         ax.axhline(0, color="0.6", lw=0.7)
         pad = group_pad[g] if g is not None else m
         ax.set_ylim(-pad, pad)
-        ax.set_title(p[0], fontsize=9.5); ax.set_ylabel("ISM contrib.")
-    axes[-1].set_xlabel(f"inserted motif +/- 10 bp; mean ISM over {n} background sequences")
+        ax.set_title(p[0], fontsize=9.5); ax.set_ylabel("contributions")
+        ax.set_xticks([])          # no x ticks / tick labels / axis title
     fig.suptitle(f"Example attribution: does the {cfg['leak_name']} motif leak into "
                  f"the new {cfg['task_name']} head?", fontsize=11)
     fig.tight_layout()
