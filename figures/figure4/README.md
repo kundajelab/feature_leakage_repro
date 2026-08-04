@@ -27,22 +27,34 @@ python run_modisco.py --modisco  # also runs the slow TF-MoDISco Panel-B step
 The MoDISco step (`--modisco`) is the slowest; it reports per-model whether AP-1
 and OCT-SOX motifs are discovered, reproducing the Panel B checkmark/X table.
 
-## `run_newhead_finetune.py` — supplement: FOS leaks into a new fine-tuned OCT4 head (env: `featleak-dl`)
+## `run_newhead_finetune.py` — supplement: a factor still leaks into a newly fine-tuned head (env: `featleak-dl`)
 
 1. Train the **leaky multitask FOS+OCT4** CNN on the union of peaks.
-2. **Add a new OCT4-prediction head** (output layer 2→3; FOS/OCT4 rows copied).
-3. **Full end-to-end fine-tune on the OCT4 objective only** — positives = OCT4
-   peaks, negatives = background. The new head's own training signal contains **no
-   FOS information** (it never sees FOS peaks as a labelled contrast), so any FOS
-   sensitivity it acquires must come from the shared representation.
-4. Marginalize the **FOS (AP-1) motif** and measure its effect on the **new OCT4
-   head** — a nonzero effect means FOS leaked in. Compared against AP-1 on the FOS
-   head (real task) and OCT-SOX on the new head (legitimate OCT4 signal / control).
+2. **Add a new task head** for the chosen factor (output layer 2→3; existing
+   FOS/OCT4 rows copied).
+3. **Full end-to-end fine-tune on that factor's objective only** — positives =
+   that factor's peaks, negatives = background. The new head's own training signal
+   contains **no information about the other transcription factor** (it never sees the other
+   factor's peaks as a labelled contrast), so any sensitivity it acquires to the
+   other factor's motif must come from the shared representation.
+4. Marginalize the **other factor's motif** and measure its effect on the **new
+   head** — a nonzero effect means that motif leaked in. Compared against the leak
+   motif on its own real task and the new head's own motif (legitimate signal /
+   control).
+
+Both directions are run with `--new-head`:
 
 ```bash
-python run_newhead_finetune.py
+python run_newhead_finetune.py --new-head oct4   # does FOS (AP-1) leak into a new OCT4 head?
+python run_newhead_finetune.py --new-head fos    # does OCT-SOX leak into a new FOS head?
 ```
-Outputs: `newhead_finetune_effect.pdf` (AP-1 effect across heads + OCT-SOX
-control), `newhead_attribution_logos.pdf` (ISM logos: AP-1 on FOS head, AP-1 on
-new OCT4 head = leak, OCT-SOX on new head = control), `newhead_finetune_stats.txt`.
 
+The **`fos`** run also trains a **single-task FOS model from scratch** as a control
+and adds it as an extra violin / logo row:
+`newhead[_fos]_finetune_effect.pdf` (leak-motif effect across heads + control),
+`newhead[_fos]_attribution_logos.pdf` (ISM logos: leak motif on its real task,
+leak motif on the new head = leak, the new head's own motif = control),
+`newhead[_fos]_finetune_stats.txt`.
+
+**Background note:** the fine-tune negatives come from the curated GC-matched
+negatives (`gc_neg_fos` / `gc_neg_oct4`).

@@ -210,6 +210,14 @@ def resolve(key: str, *, must_exist: bool = False) -> Path:
     Set ``must_exist=True`` to raise ``FileNotFoundError`` when nothing resolves
     to an existing path.
     """
+    def _exists(p: Path) -> bool:
+        # A candidate on a directory we lack permission to stat should be
+        # skipped, not crash resolution (Path.exists() raises PermissionError).
+        try:
+            return p.exists()
+        except OSError:
+            return False
+
     env_key = f"FEATLEAK_{key.upper()}"
     if os.environ.get(env_key):
         path = Path(os.environ[env_key])
@@ -219,9 +227,9 @@ def resolve(key: str, *, must_exist: bool = False) -> Path:
         candidates = _REGISTRY.get(key)
         if not candidates:
             raise KeyError(f"Unknown resource key: {key!r}")
-        path = next((Path(c) for c in candidates if Path(c).exists()),
+        path = next((Path(c) for c in candidates if _exists(Path(c))),
                     Path(candidates[0]))
-    if must_exist and not path.exists():
+    if must_exist and not _exists(path):
         raise FileNotFoundError(
             f"Resource {key!r} resolved to {path}, which does not exist. "
             f"Set ${env_key} or edit common/paths.yaml."
@@ -235,7 +243,11 @@ def report() -> None:
     print("-" * 100)
     for key in _REGISTRY:
         p = resolve(key)
-        flag = "OK" if p.exists() else "MISS"
+        try:
+            ok = p.exists()
+        except OSError:
+            ok = False
+        flag = "OK" if ok else "MISS"
         print(f"{key:<32} {flag:<7} {p}")
 
 

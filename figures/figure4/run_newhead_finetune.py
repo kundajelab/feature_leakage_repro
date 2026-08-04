@@ -1,42 +1,51 @@
 #!/usr/bin/env python
-"""Figure 4 supplement: does FOS leak into a NEWLY fine-tuned OCT4 head?
+"""Figure 4 supplement: does a factor leak into a NEWLY fine-tuned head?
 
 Motivation (Discussion of the paper): "adding more task-specific layers or
 fine-tuning a multitask model on one task does not necessarily remove a spurious
 association if the shared trunk already represents it." We test this in the
-FOS/OCT4 setting by asking whether the FOS (AP-1) motif leaks into a brand-new
-OCT4 head that is fine-tuned on a CLEAN OCT4-vs-background objective.
+FOS/OCT4 setting in BOTH directions:
 
-Procedure
----------
+  --new-head oct4  : add a new OCT4 head, fine-tune on OCT4 peaks vs background,
+                     and ask whether the FOS (AP-1) motif leaks into it.
+  --new-head fos   : add a new FOS/AP1 head, fine-tune on FOS peaks vs background,
+                     and ask whether the OCT-SOX motif leaks into it.
+
+Procedure (identical for both, only the task/motif roles swap)
+--------------------------------------------------------------
 1. Train the LEAKY multitask FOS+OCT4 CNN on the union of FOS and OCT4 peaks
    (helpers_4.train_multitask_model). task 0 = FOS/AP1, task 1 = OCT4.
-2. ADD A NEW OCT4-prediction head (expand the output layer 2 -> 3; new head index 2;
-   FOS/OCT4 rows copied verbatim).
-3. FULL end-to-end FINE-TUNE on the OCT4 objective ONLY: positives = OCT4 ChIP
-   peaks, negatives = background regions; loss = BCE on the new head (index 2).
-   The new head's own training signal contains NO FOS information (it never sees
-   FOS peaks as a labelled contrast) -- so any FOS-motif sensitivity it acquires
-   can only come from the shared representation.
-4. Marginalize the FOS (AP-1) motif and measure its effect on the NEW OCT4 head.
-   A significant nonzero effect = FOS leaks into the new head. We compare against:
-     - AP-1 effect on the FOS head (task 0)  -> its real, strong task response,
-     - AP-1 effect on the original OCT4 head (task 1),
-     - OCT-SOX effect on the new head        -> the legitimate OCT4 signal (control
-       that the new head genuinely learned OCT4).
+2. ADD A NEW head for the chosen task (expand the output layer 2 -> 3; new head
+   index 2; existing FOS/OCT4 rows copied verbatim).
+3. FULL end-to-end FINE-TUNE on the chosen task's objective ONLY: positives = that
+   factor's ChIP peaks, negatives = background regions; loss = BCE on the new head
+   (index 2). The new head's own training signal contains NO information about the
+   OTHER factor (it never sees the other factor's peaks as a labelled contrast) --
+   so any sensitivity it acquires to the other factor's motif can only come from
+   the shared representation.
+4. Marginalize the OTHER factor's motif and measure its effect on the NEW head.
+   A significant nonzero effect = that motif leaks into the new head. We compare:
+     - leak motif on its OWN task's head        -> its real, strong task response,
+     - leak motif on the ORIGINAL head of the new head's task,
+     - leak motif on the NEW head               -> the leak test,
+     - the new head's OWN motif on the NEW head -> the legitimate signal (control
+       that the new head genuinely learned its task).
 
-Outputs (outputs/):
-    newhead_finetune_effect.pdf       AP-1 effect across heads + OCT-SOX control
-    newhead_attribution_logos.pdf     example ISM logos: AP-1 on FOS head, AP-1 on
-                                      new OCT4 head (leak), OCT-SOX on new head
-    newhead_finetune_stats.txt        medians, Wilcoxon p-values, AUCs
+Outputs (outputs/); the oct4 run keeps the original unsuffixed names, the fos run
+adds a "_fos" suffix:
+    newhead[_fos]_finetune_effect.pdf     leak-motif effect across heads + control
+    newhead[_fos]_attribution_logos.pdf   example ISM logos (leak on new head, ...)
+    newhead[_fos]_finetune_stats.txt      medians, Wilcoxon p-values, AUCs
 
 Run (env: featleak-dl):
-    python run_newhead_finetune.py
+    python run_newhead_finetune.py --new-head oct4      # FOS leaks into new OCT4 head
+    python run_newhead_finetune.py --new-head fos       # OCT-SOX leaks into new FOS head
 """
 
 from __future__ import annotations
 
+import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -62,18 +71,85 @@ matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 
+import pybedtools  # noqa: E402
+
 from common import config  # noqa: E402
 from common.motifs import OCT_SOX, AP1  # noqa: E402
-from helpers_4 import train_multitask_model  # noqa: E402
-from run_experiment import build_data  # noqa: E402
+from common.gc_negatives import gc_matched_negatives  # noqa: E402
+from helpers_3 import merge_bed_files_and_label  # noqa: E402
+from helpers_4 import train_multitask_model, train_singletask_model  # noqa: E402
+
+
+def build_data():
+    """FOS+OCT4 merged peaks/labels + a background of non-peak regions.
+
+    Background prefers the curated GC-matched negatives (config keys
+    gc_neg_fos / gc_neg_oct4); if those BEDs are not readable on this machine it
+    falls back to GC-matched negatives sampled from the genome, so the experiment
+    stays self-contained.
+    """
+    hg38 = str(config.resolve("hg38_fasta", must_exist=True))
+    fos = str(config.resolve("chip_fos_fibroblast", must_exist=True))
+    oct4 = str(config.resolve("chip_oct4_hesc", must_exist=True))
+    peaks, labels = merge_bed_files_and_label(fos, oct4, peak_size=300)
+
+    active = pybedtools.BedTool.from_dataframe(peaks[["chrom", "start", "end"]])
+    bg_parts, curated = [], True
+    for key in ("gc_neg_fos", "gc_neg_oct4"):
+        p = config.resolve(key)
+        try:
+            readable = p.is_file() and os.access(p, os.R_OK)
+        except OSError:
+            readable = False
+        if not readable:
+            curated = False
+            break
+        bt = pybedtools.BedTool(str(p))
+        bg_parts.append(bt.window(active, w=1000, v=True).to_dataframe())
+    if curated:
+        background = pd.concat(bg_parts)[["chrom", "start", "end"]]
+    else:
+        print("  curated gc_neg_* BEDs not readable -> generating GC-matched "
+              "negatives from the genome")
+        background = gc_matched_negatives(hg38, peaks[["chrom", "start", "end"]],
+                                          width=300, n_target=40000, seed=SEED)
+    return hg38, peaks, labels, background
 
 OUT = Path(__file__).parent / "outputs"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BASE_PROP = 0.2          # background proportion for the leaky base model
-FT_EPOCHS = 8            # fine-tune epochs on the new OCT4 head
+FT_EPOCHS = 8            # fine-tune epochs on the new head
 FT_LR = 1e-4             # gentle full fine-tune
 N_MARG = 1000            # background loci for motif marginalization
 SEED = 42
+
+# Task/motif roles for each new-head choice. task 0 = FOS/AP1, task 1 = OCT4.
+#   pos_label_col : which peak label column supplies the fine-tune positives
+#   leak_*        : the OTHER factor's motif, whose leak into the new head we test
+#   legit_*       : the new head's OWN motif (legitimate-signal control)
+#   own_task_idx  : head on which the leak motif is a real, strong response
+#   orig_idx      : the original head of the new head's task
+NEWHEAD = {
+    # single_task_control: only meaningful for the FOS direction. In fibroblast,
+    # OCT-SOX is truly irrelevant, so a from-scratch single-task FOS model gives a
+    # clean ~0 null. In the OCT4 direction a from-scratch single-task OCT4 model
+    # assigns AP-1 a real repressive (anti-correlation) effect in hESC, which is
+    # not spurious leakage, so we omit that confounded control there.
+    "oct4": dict(
+        pos_label_col=1, task_name="OCT4",
+        leak_motif=AP1, leak_name="AP-1 (FOS)", leak_short="AP-1",
+        legit_motif=OCT_SOX, legit_name="OCT-SOX",
+        own_task_idx=0, own_task_name="FOS", orig_idx=1, orig_name="OCT4",
+        single_task_control=False, suffix="",
+    ),
+    "fos": dict(
+        pos_label_col=0, task_name="FOS",
+        leak_motif=OCT_SOX, leak_name="OCT-SOX", leak_short="OCT-SOX",
+        legit_motif=AP1, legit_name="AP-1 (FOS)",
+        own_task_idx=1, own_task_name="OCT4", orig_idx=0, orig_name="FOS",
+        single_task_control=True, suffix="_fos",
+    ),
+}
 
 
 def one_hot_regions(regions: pd.DataFrame, hg38: str):
@@ -84,8 +160,8 @@ def one_hot_regions(regions: pd.DataFrame, hg38: str):
     return loci[full], keep, full
 
 
-def add_oct4_head(model):
-    """Expand output_layer Linear(100,2) -> Linear(100,3); copy FOS/OCT4 rows."""
+def add_head(model):
+    """Expand output_layer Linear(100,2) -> Linear(100,3); copy existing rows."""
     old = model.output_layer
     new = nn.Linear(old.in_features, old.out_features + 1)
     with torch.no_grad():
@@ -113,8 +189,8 @@ def auc_for_head(model, pos_loci, neg_loci, head_idx):
     return roc_auc_score(y, p)
 
 
-def finetune_on_new_oct4_head(model, new_idx, pos_loci, neg_loci, log):
-    """Full end-to-end fine-tune; loss = BCE on the new head only (OCT4 objective)."""
+def finetune_on_new_head(model, new_idx, pos_loci, neg_loci, log):
+    """Full end-to-end fine-tune; loss = BCE on the new head only (one task)."""
     X = torch.cat([pos_loci, neg_loci])
     y = torch.tensor(np.r_[np.ones(len(pos_loci)), np.zeros(len(neg_loci))], dtype=torch.float32)
     perm = torch.randperm(len(X), generator=torch.Generator().manual_seed(SEED))
@@ -133,7 +209,7 @@ def finetune_on_new_oct4_head(model, new_idx, pos_loci, neg_loci, log):
             b = idx[i:i + bs]
             xb, yb = Xtr[b].to(DEVICE), ytr[b].to(DEVICE)
             opt.zero_grad()
-            logit_new = model(xb)[:, new_idx]        # ONLY the new OCT4 head enters the loss
+            logit_new = model(xb)[:, new_idx]        # ONLY the new head enters the loss
             loss = crit(logit_new, yb)
             loss.backward(); opt.step()
             tot += loss.item() * len(b)
@@ -145,100 +221,153 @@ def finetune_on_new_oct4_head(model, new_idx, pos_loci, neg_loci, log):
     return model
 
 
-def attribution_logos(panels, bg_loci, n=24):
-    """Stacked example ISM logos. `panels` = list of (title, model, motif, target)."""
+def attribution_logos(panels, bg_loci, cfg, n=24):
+    """Stacked example ISM logos. `panels` = list of (title, model, motif, target).
+
+    All panels share one y-axis scale so a flat (near-zero) track reads as flat
+    rather than being autoscaled up to look like a motif.
+    """
     fig, axes = plt.subplots(len(panels), 1, figsize=(8.5, 2.05 * len(panels)))
     if len(panels) == 1:
         axes = [axes]
-    for ax, (title, model, motif, tgt) in zip(axes, panels):
+    # First pass: compute all attribution slices to find a common y-range.
+    slices = []
+    for (title, model, motif, tgt) in panels:
         X = bg_loci[:n].clone()
         center = 150 - len(motif) // 2
         Xins = substitute(X, motif, start=center)
         model.eval()
         attr = saturation_mutagenesis(model, Xins, target=tgt, verbose=False)
         lo, hi = center - 10, center + len(motif) + 10
-        plot_logo(attr.mean(dim=0).cpu().numpy()[:, lo:hi], ax=ax)
+        slices.append(attr.mean(dim=0).cpu().numpy()[:, lo:hi])
+    vmax = max(np.abs(s).sum(axis=0).max() for s in slices)   # tallest stacked column
+    pad = 1.05 * vmax
+    for ax, (title, *_), sl in zip(axes, panels, slices):
+        plot_logo(sl, ax=ax)
         ax.axhline(0, color="0.6", lw=0.7)
+        ax.set_ylim(-pad, pad)                                # shared scale
         ax.set_title(title, fontsize=9.5); ax.set_ylabel("ISM contrib.")
     axes[-1].set_xlabel(f"inserted motif +/- 10 bp; mean ISM over {n} background sequences")
-    fig.suptitle("Example attribution: does the FOS (AP-1) motif leak into the new OCT4 head?",
-                 fontsize=11)
+    fig.suptitle(f"Example attribution: does the {cfg['leak_name']} motif leak into "
+                 f"the new {cfg['task_name']} head?", fontsize=11)
     fig.tight_layout()
+    stem = f"newhead{cfg['suffix']}_attribution_logos"
     for ext in ("pdf", "png", "svg"):
-        fig.savefig(OUT / f"newhead_attribution_logos.{ext}", dpi=150 if ext == "png" else None)
+        fig.savefig(OUT / f"{stem}.{ext}", dpi=150 if ext == "png" else None)
     plt.close(fig)
-    print("attribution logos ->", OUT / "newhead_attribution_logos.pdf")
+    print("attribution logos ->", OUT / f"{stem}.pdf")
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--new-head", choices=list(NEWHEAD), default="oct4",
+                    help="which new task head to add and fine-tune")
+    args = ap.parse_args()
+    cfg = NEWHEAD[args.new_head]
+
     OUT.mkdir(exist_ok=True)
     torch.manual_seed(SEED); np.random.seed(SEED)
     log: list[str] = []
 
     hg38, peaks, labels, background = build_data()
     labels = np.asarray(labels)
-    print(f"peaks={peaks.shape[0]}  background={background.shape[0]}  device={DEVICE}")
+    col = cfg["pos_label_col"]
+    print(f"new head = {cfg['task_name']}   peaks={peaks.shape[0]}  "
+          f"background={background.shape[0]}  device={DEVICE}")
 
     # --- 1. leaky multitask FOS+OCT4 base model ------------------------------
     print(f"[1] training leaky multitask FOS+OCT4 base (proportion={BASE_PROP}) ...")
-    model, fos_auc_base = train_multitask_model(peaks, labels, background, hg38,
-                                                relative_proportion=BASE_PROP,
-                                                device=DEVICE, random_state=SEED)
+    model, _ = train_multitask_model(peaks, labels, background, hg38,
+                                     relative_proportion=BASE_PROP,
+                                     device=DEVICE, random_state=SEED)
 
     bg_marg, _, _ = one_hot_regions(background.sample(n=N_MARG, random_state=SEED), hg38)
-    oct4_pos_eval, _, _ = one_hot_regions(
-        peaks[labels[:, 1] == 1][["chrom", "start", "end"]].sample(n=800, random_state=SEED), hg38)
+    pos_eval, _, _ = one_hot_regions(
+        peaks[labels[:, col] == 1][["chrom", "start", "end"]].sample(n=800, random_state=SEED), hg38)
     neg_eval, _, _ = one_hot_regions(background.sample(n=800, random_state=SEED + 1), hg38)
 
-    # --- 2. add a NEW OCT4 head ---------------------------------------------
-    print("[2] adding a new OCT4 head (output 2 -> 3) ...")
-    model, new_idx = add_oct4_head(model)
+    # --- 2. add a NEW head for the chosen task ------------------------------
+    print(f"[2] adding a new {cfg['task_name']} head (output 2 -> 3) ...")
+    model, new_idx = add_head(model)
 
-    # --- 3. full fine-tune on the OCT4 objective only ------------------------
-    print(f"[3] full fine-tune on OCT4 objective only (new head idx={new_idx}) ...")
-    oct4_pos_ft, _, _ = one_hot_regions(peaks[labels[:, 1] == 1][["chrom", "start", "end"]], hg38)
-    neg_ft, _, _ = one_hot_regions(background.sample(n=min(len(oct4_pos_ft), len(background)),
+    # --- 3. full fine-tune on the chosen task's objective only --------------
+    print(f"[3] full fine-tune on {cfg['task_name']} objective only (new head idx={new_idx}) ...")
+    pos_ft, _, _ = one_hot_regions(peaks[labels[:, col] == 1][["chrom", "start", "end"]], hg38)
+    neg_ft, _, _ = one_hot_regions(background.sample(n=min(len(pos_ft), len(background)),
                                                      random_state=SEED + 2), hg38)
-    print(f"    OCT4 positives={len(oct4_pos_ft)}  background negatives={len(neg_ft)}")
-    model = finetune_on_new_oct4_head(model, new_idx, oct4_pos_ft, neg_ft, log)
+    print(f"    {cfg['task_name']} positives={len(pos_ft)}  background negatives={len(neg_ft)}")
+    model = finetune_on_new_head(model, new_idx, pos_ft, neg_ft, log)
 
-    # --- 4. does the FOS (AP-1) motif leak into the new OCT4 head? -----------
-    print("[4] marginalizing FOS (AP-1) motif across heads ...")
-    ap1_fos      = motif_effect(model, bg_marg, AP1, task_idx=0)         # real FOS task
-    ap1_origoct4 = motif_effect(model, bg_marg, AP1, task_idx=1)         # original OCT4 head
-    ap1_newhead  = motif_effect(model, bg_marg, AP1, task_idx=new_idx)   # NEW head -> leak test
-    octsox_newhd = motif_effect(model, bg_marg, OCT_SOX, task_idx=new_idx)  # legit OCT4 signal
+    # --- 3b. single-task control model trained FROM SCRATCH on the same task -
+    # (no shared multitask trunk -> the reference for how much the trunk leaks).
+    # Only for the FOS direction; see NEWHEAD note on single_task_control.
+    st_model = st_auc = leak_st = None
+    if cfg["single_task_control"]:
+        print(f"[3b] training single-task {cfg['task_name']} model from scratch ...")
+        st_model, st_auc = train_singletask_model(peaks, labels, background, hg38,
+                                                  task_idx=col, relative_proportion=BASE_PROP,
+                                                  device=DEVICE, random_state=SEED)
 
-    newhead_auc = auc_for_head(model, oct4_pos_eval, neg_eval, head_idx=new_idx)
+    # --- 4. does the OTHER factor's motif leak into the new head? -----------
+    print(f"[4] marginalizing {cfg['leak_name']} motif across heads ...")
+    leak_own  = motif_effect(model, bg_marg, cfg["leak_motif"], task_idx=cfg["own_task_idx"])  # real task
+    leak_orig = motif_effect(model, bg_marg, cfg["leak_motif"], task_idx=cfg["orig_idx"])      # orig head
+    leak_new  = motif_effect(model, bg_marg, cfg["leak_motif"], task_idx=new_idx)              # NEW -> leak
+    if st_model is not None:
+        leak_st = motif_effect(st_model, bg_marg, cfg["leak_motif"], task_idx=0)               # single-task ctrl
+    legit_new = motif_effect(model, bg_marg, cfg["legit_motif"], task_idx=new_idx)             # legit signal
+
+    newhead_auc = auc_for_head(model, pos_eval, neg_eval, head_idx=new_idx)
 
     def stat(x, alt):
         x = np.asarray(x)
         return float(np.median(x)), float(x.mean()), float(wilcoxon(x, alternative=alt).pvalue)
 
-    m_fos, _, p_fos       = stat(ap1_fos, "greater")
-    m_o1,  _, p_o1        = stat(ap1_origoct4, "two-sided" if False else "greater")
-    m_new, mean_new, _    = stat(ap1_newhead, "two-sided")
-    p_new_ne = min(wilcoxon(ap1_newhead, alternative="greater").pvalue,
-                   wilcoxon(ap1_newhead, alternative="less").pvalue) * 2   # 2-sided != 0
-    m_ctrl, _, p_ctrl     = stat(octsox_newhd, "greater")
+    m_own, _, p_own    = stat(leak_own, "greater")
+    m_orig, _, _       = stat(leak_orig, "greater")
+    m_new, mean_new, _ = stat(leak_new, "two-sided")
+    p_new_ne = min(wilcoxon(leak_new, alternative="greater").pvalue,
+                   wilcoxon(leak_new, alternative="less").pvalue) * 2   # 2-sided != 0
+    m_ctrl, _, p_ctrl  = stat(legit_new, "greater")
 
+    ln, tn = cfg["leak_name"], cfg["task_name"]
     lines = [
-        f"AP-1(FOS) effect on FOS head (task 0, real):        median={m_fos:+.3f}  Wilcoxon(>0) p={p_fos:.2e}",
-        f"AP-1(FOS) effect on ORIGINAL OCT4 head (task 1):    median={m_o1:+.3f}",
-        f"AP-1(FOS) effect on NEW fine-tuned OCT4 head:       median={m_new:+.3f}  mean={mean_new:+.3f}  "
-        f"Wilcoxon(!=0) p={p_new_ne:.2e}   <-- FOS leaks into the new head",
-        f"OCT-SOX effect on NEW OCT4 head (legit control):    median={m_ctrl:+.3f}  Wilcoxon(>0) p={p_ctrl:.2e}",
-        f"NEW OCT4 head AUC (OCT4 vs background) = {newhead_auc:.3f}   (the head genuinely learned OCT4)",
+        f"{ln} effect on {cfg['own_task_name']} head (real):        median={m_own:+.3f}  Wilcoxon(>0) p={p_own:.2e}",
+        f"{ln} effect on ORIGINAL {cfg['orig_name']} head:          median={m_orig:+.3f}",
+        f"{ln} effect on NEW fine-tuned {tn} head:                  median={m_new:+.3f}  mean={mean_new:+.3f}  "
+        f"Wilcoxon(!=0) p={p_new_ne:.2e}   <-- {ln} leaks into the new head",
     ]
-    (OUT / "newhead_finetune_stats.txt").write_text("\n".join(log + [""] + lines) + "\n")
+    if leak_st is not None:
+        m_st, mean_st, _ = stat(leak_st, "two-sided")
+        p_st_ne = min(wilcoxon(leak_st, alternative="greater").pvalue,
+                      wilcoxon(leak_st, alternative="less").pvalue) * 2   # 2-sided != 0
+        lines.append(
+            f"{ln} effect on SINGLE-TASK {tn} (from scratch):           median={m_st:+.3f}  mean={mean_st:+.3f}  "
+            f"Wilcoxon(!=0) p={p_st_ne:.2e}   <-- from-scratch control")
+    lines += [
+        f"{cfg['legit_name']} effect on NEW {tn} head (legit ctrl): median={m_ctrl:+.3f}  Wilcoxon(>0) p={p_ctrl:.2e}",
+        f"NEW {tn} head AUC ({tn} vs background) = {newhead_auc:.3f}   (the head genuinely learned {tn})",
+    ]
+    if st_auc is not None:
+        lines.append(f"SINGLE-TASK {tn} AUC ({tn} vs background) = {st_auc:.3f}")
+    (OUT / f"newhead{cfg['suffix']}_finetune_stats.txt").write_text("\n".join(log + [""] + lines) + "\n")
     print("\n".join(lines))
 
-    # --- figure: AP-1 effect across heads + OCT-SOX control ------------------
-    data = [ap1_fos, ap1_origoct4, ap1_newhead, octsox_newhd]
-    xlab = ["AP-1 ->\nFOS head\n(real task)", "AP-1 ->\norig OCT4\nhead",
-            "AP-1 ->\nNEW OCT4 head\n(leak)", "OCT-SOX ->\nNEW OCT4 head\n(legit)"]
-    cols = ["#55A868", "#8172B3", "#C44E52", "#4C72B0"]
-    fig, ax = plt.subplots(figsize=(7.2, 5.0))
+    # --- figure: leak-motif effect across heads (+ single-task) + legit control
+    ls = cfg["leak_short"]
+    data = [leak_own, leak_orig, leak_new]
+    xlab = [f"{ls} ->\n{cfg['own_task_name']} head\n(real task)",
+            f"{ls} ->\norig {cfg['orig_name']}\nhead",
+            f"{ls} ->\nNEW {tn} head\n(leak)"]
+    cols = ["#55A868", "#8172B3", "#C44E52"]
+    if leak_st is not None:
+        data.append(leak_st)
+        xlab.append(f"{ls} ->\nsingle-task {tn}\n(from scratch)")
+        cols.append("#DD8452")
+    data.append(legit_new)
+    xlab.append(f"{cfg['legit_name']} ->\nNEW {tn} head\n(legit)")
+    cols.append("#4C72B0")
+    fig, ax = plt.subplots(figsize=(1.7 * len(data), 5.0))
     parts = ax.violinplot(data, positions=range(len(data)), widths=0.8, showextrema=False)
     for pc, c in zip(parts["bodies"], cols):
         pc.set_facecolor(c); pc.set_alpha(0.65); pc.set_edgecolor("white")
@@ -250,22 +379,33 @@ def main() -> None:
     ax.axhline(0, ls="--", color="0.4", lw=1)
     ax.set_xticks(range(len(data))); ax.set_xticklabels(xlab, fontsize=8.5)
     ax.set_ylabel("motif marginalization effect (logit)")
-    ax.set_title("The FOS (AP-1) motif leaks into a new OCT4 head fine-tuned only on\n"
-                 "OCT4-vs-background (the head never saw FOS as a labelled contrast)",
+    never_saw = cfg["own_task_name"] if args.new_head == "oct4" else cfg["orig_name"]
+    ax.set_title(f"The {cfg['leak_name']} motif leaks into a new {tn} head fine-tuned only on\n"
+                 f"{tn}-vs-background (the head never saw {never_saw} as a labelled contrast)",
                  fontsize=10)
     fig.tight_layout()
+    stem = f"newhead{cfg['suffix']}_finetune_effect"
     for ext in ("pdf", "png", "svg"):
-        fig.savefig(OUT / f"newhead_finetune_effect.{ext}", dpi=150 if ext == "png" else None)
+        fig.savefig(OUT / f"{stem}.{ext}", dpi=150 if ext == "png" else None)
     plt.close(fig)
-    print("done ->", OUT / "newhead_finetune_effect.pdf")
+    print("done ->", OUT / f"{stem}.pdf")
 
     # --- example attribution logos ------------------------------------------
     print("[5] example ISM attribution logos ...")
-    attribution_logos([
-        ("AP-1 (FOS) motif -> FOS head  (real task, strong)", model, AP1, 0),
-        ("AP-1 (FOS) motif -> NEW OCT4 head  (leak: head trained only on OCT4)", model, AP1, new_idx),
-        ("OCT-SOX motif -> NEW OCT4 head  (legitimate OCT4 signal, control)", model, OCT_SOX, new_idx),
-    ], bg_marg)
+    panels = [
+        (f"{cfg['leak_name']} motif -> {cfg['own_task_name']} head  (real task, strong)",
+         model, cfg["leak_motif"], cfg["own_task_idx"]),
+        (f"{cfg['leak_name']} motif -> NEW {tn} head  (leak: head trained only on {tn})",
+         model, cfg["leak_motif"], new_idx),
+    ]
+    if st_model is not None:
+        panels.append(
+            (f"{cfg['leak_name']} motif -> single-task {tn} from scratch  (control)",
+             st_model, cfg["leak_motif"], 0))
+    panels.append(
+        (f"{cfg['legit_name']} motif -> NEW {tn} head  (legitimate {tn} signal, control)",
+         model, cfg["legit_motif"], new_idx))
+    attribution_logos(panels, bg_marg, cfg)
 
 
 if __name__ == "__main__":

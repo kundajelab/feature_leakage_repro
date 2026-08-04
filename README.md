@@ -118,7 +118,7 @@ Run from the figure's directory with the listed env. Times are on one L40S.
 | **2 supp** | Enformer/Borzoi vs matched ChromBPNet (dermis) | `figure2/run_marg_grelu.py` + `run_boxplot_supplement.py` | dl | heavy/min |
 | **3** | AP1-counting head on frozen Beluga leaks to many motifs | `figure3/run.py` | dl | ~8 min |
 | **4** | Multi-task model more OCT-SOX-sensitive than single-task | `figure4/run_experiment.py` (+ `run_modisco.py`) | dl | ~6 min |
-| **4 supp** | adding a new OCT4 head + fine-tuning does *not* remove the leak | `figure4/run_newhead_finetune.py` | dl | ~6 min |
+| **4 supp** | adding a new head + fine-tuning does *not* remove the leak (both directions) | `figure4/run_newhead_finetune.py --new-head {oct4,fos}` | dl | ~6 min |
 | **5 A,B** | Balanced synthetic simulation: leakage correlates with effect size | `figure5/run_simulation.py` | dl | ~10 min |
 | **5 C–E** | Beluga activations entangle AP-1 and CTCF; AP1 probe detects CTCF | `figure5/run_entanglement.py` | dl | ~5 min |
 | **6** | Sequence design driven by off-target-repressive motifs | `figure6/run_plots.py` (fast) / `run_design.py` (slow) | dl | s / hrs |
