@@ -120,7 +120,9 @@ def main():
     ap.add_argument("--ism-npz", default="panel_c_ism.npz", help="panel c ISM npz in outputs/")
     ap.add_argument("--ism-stem", default="fig7_c_ism", help="output basename for panel c")
     a = ap.parse_args()
-    m = panel_b(); panel_c(a.ism_npz, a.ism_stem); med, p = panel_d()
+    m = panel_b(); med, p = panel_d()
+    if (D / a.ism_npz).exists():          # optional ISM at an inserted motif (--stage ism)
+        panel_c(a.ism_npz, a.ism_stem)
     print(f"b: Pearson r {m[0]:.3f} -> {m[1]:.3f}")
     print(f"d: medians pre {med['pre']:+.3f}, fine-tuned {med['ft']:+.3f}, "
           f"ChromBPNet {med['cbp']:+.3f}; paired Wilcoxon p={p:.2g}")

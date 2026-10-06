@@ -1,18 +1,12 @@
-# Patches applied to `alphagenome-ft` 0.1.9 (env `alphagenome-ft`)
+# Changes to `alphagenome-ft` 0.1.9 for JAX 0.10.2
 
-The published `alphagenome-ft` 0.1.9 does **not** run its `train()` loop as-is
-against the JAX we installed (0.10.2) — three defects surface once you get past
-model load. All three are bugs in the package itself (or hard-coded to an older
-JAX), not in our environment. The smoke test
-(`smoke_test.py`) passes only with these applied.
-
-File patched (both under the env's site-packages):
-`…/envs/alphagenome-ft/lib/python3.11/site-packages/alphagenome_ft/finetune/train.py`
+With JAX 0.10.2, the `train()` loop of `alphagenome-ft` 0.1.9 needs three changes to
+`alphagenome_ft/finetune/train.py` in the environment's site-packages.
 
 ### 1. Missing `parameter_utils` import  (NameError)
 `train.py` uses `parameter_utils.DictKey/…/get_head_parameter_paths` but never
 imports the module (it only imports the *symbol* `create_optimizer` from
-`optimizer_utils`, then shadows it with a local buggy `create_optimizer`).
+`optimizer_utils`, then defines a local `create_optimizer`).
 
 Add near the other imports (after the `custom_model` import):
 ```python
@@ -44,16 +38,5 @@ value is unused — pass an empty list. In BOTH `_predict(...)` call sites add:
 
 ---
 
-## Notes / limitations
-- Root cause is **version mixing**: `alphagenome-ft` 0.1.9 targets an older JAX
-  (pmap era) and a newer `alphagenome` metadata format than the local
-  `alphagenome_research` v1 weights. These patches bridge the gap for
-  single-GPU **heads-only** custom-head fine-tuning.
-- **Predefined heads** (`register_predefined_head` / `source: "predefined"`)
-  still hit a separate metadata incompatibility
-  (`TypeError: object of type 'AlphaGenomeOutputMetadata' has no len()` in
-  `custom_model._resolve_user_metadata`). Use **custom heads**
-  (`register_custom_head` + `source: "custom"`) — that path works.
-- Multi-GPU (`num_devices > 1`) untested here; patch #2 keeps the single-device
-  pmap path working. For real multi-GPU you'd want to revisit the pmap→shard_map
-  migration rather than rely on the broadcast shim.
+These changes support single-GPU, heads-only fine-tuning with custom heads
+(`register_custom_head`).

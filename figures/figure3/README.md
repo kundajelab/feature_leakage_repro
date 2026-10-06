@@ -1,35 +1,29 @@
-# Figure 3 — AP1-counting task on frozen Beluga reveals feature leakage
+# Figure 3 — An AP-1 counting head on frozen Beluga responds to other motifs
 
-## Script (env: `featleak-dl`)
+Env: `featleak-dl`.
+
+`notebooks/train_ap_1_counting.ipynb` produced Figure 3 and Supplementary Fig. 3 (saved
+outputs included). `run.py` runs the same analysis from the command line:
 
 ```bash
 python run.py --epochs 5 --train-size 5000
 ```
 
-Pipeline: load Beluga, add a 2003rd (counting) output, freeze everything except
-that output's weights, train it to count AP-1 motifs in random DNA, then measure
-how inserting each of ~37 AP-1-dissimilar motifs changes the predicted count
-(marginalization leakage).
+A counting output is added to Beluga's final linear layer and trained, with the rest of
+the model frozen, to count AP-1 motifs (0–5 copies) inserted into random 2 kb sequences.
+Each of 37 AP-1-dissimilar Vierstra consensus motifs is then inserted into 100 random
+backgrounds carrying two AP-1 copies, and its effect on the predicted count is tested with
+a two-sided Wilcoxon signed-rank test (Benjamini–Hochberg across motifs).
 
-## Outputs
-- `scatter_plot_with_fit.pdf` — supp (a), predicted vs actual count.
-- `top_4_motifs_violin_plot.pdf` — Panel B, largest leakage effects.
-- `logo_{AP1,CTCF,EWSR1-FLI1,NFKB1,ZIC1}.pdf` — Panels C–G, DeepLIFT logos.
-- `motif_significance_analysis.pdf` — supp (b/c), significance pie + FDR hist.
-- `motif_effect_results.npz` — per-motif leakage effect arrays.
+## Outputs (`outputs/`)
 
+| file | panel |
+|---|---|
+| `scatter_plot_with_fit.pdf` | Supp 3a: predicted vs inserted count |
+| `top_4_motifs_violin_plot.pdf` | 3b: the four motifs with the largest mean effect |
+| `logo_{AP1,CTCF,EWSR1-FLI1,NFKB1,ZIC1}.pdf` | 3c–g: DeepLIFT/SHAP logos |
+| `motif_significance_analysis.pdf` | Supp 3b, c |
+| `motif_effect_results.npz` | per-motif effects |
 
-
-## Source notebook (published numbers)
-
-`notebooks/train_ap_1_counting.ipynb` is the notebook that produced Figure 3 and
-Supplementary Fig 3, with its saved outputs (held-out Pearson r = 0.776; 23 of 37 motifs
-significant after Benjamini–Hochberg; top four CTCF(L), EWSR1–FLI1, NFKB1, ZIC1). It imports
-`notebooks/model.py`, whose Beluga, dataset and training code matches `common/beluga_model.py`.
-Relative paths in the notebook (`../deepSEA_negatives/`, `../ap1_counting/data/`) refer to
-the original analysis directory, `/users/kobbad/feat_leakage/` (Beluga weights and the
-Vierstra motif tables; see `common/config.py`).
-
-`run.py` reimplements the notebook. Training and background sequences are generated
-without a fixed seed, so a rerun gives similar but not identical numbers (e.g. r ≈ 0.76,
-19–20 of 37 motifs significant).
+Random training and background sequences are not seeded, so reruns give slightly
+different numbers.

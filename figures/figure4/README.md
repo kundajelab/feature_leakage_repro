@@ -1,77 +1,51 @@
-# Figure 4 — Multi-task > single-task sensitivity from biased locus selection
+# Figure 4 — Training-locus selection and multi-task learning induce off-target motif responses
 
+Env: `featleak-dl` (Fig. 4b: `featleak-tf`).
 
-## `run_experiment.py` — Panel C + supplement (d,e) (env: `featleak-dl`)
-Trains CNNs to predict AP1 (FOS) fibroblast ChIP-seq peaks under increasing
-proportions of random background regions, and measures the OCT-SOX motif's
-effect on the AP1 prediction (which should be ~0 in fibroblast).
+Small CNNs are trained to predict FOS ChIP-seq peaks in IMR-90 fibroblasts (ENCSR124AIG),
+alone or together with POU5F1/OCT4 peaks in H1 cells (ENCSR000BMU), and the effect of
+inserting an OCT–SOX motif on the FOS prediction is measured. The peak sets and GC-matched
+background regions are shipped in `data/figure4/`.
 
-```bash
-python run_experiment.py
-```
-Outputs: `single_vs_multi_split_violin.pdf` (C), `single_task_auc_barplot.pdf`
-and `multi_task_auc_barplot.pdf` (supp d,e), `fig4_effects.pkl`.
+## Notebooks
 
+| notebook | panels |
+|---|---|
+| `notebooks/analysis_3.ipynb` | 4a (ISM), 4c, Supp 4a–e |
+| `notebooks/panel_b_modisco_keras.ipynb` | 4b: TensorFlow/Keras models, gradient × input → TF-MoDISco (env `featleak-tf`) |
 
+Fig. 4c asterisks: two-sided Mann–Whitney U test, single- vs multi-task model at each
+background fraction, Benjamini–Hochberg across the four fractions.
 
-`plot_auc_bars.py` redraws supplement (d, e) from the manuscript run's AUCs
-(`--from-pkl` plots a fresh `run_experiment.py` result instead).
-
-## `run_modisco.py` — Panel A/B + supplement ISM logos (env: `featleak-dl`)
-Trains the three canonical models (leaky single-task, single-task, multi-task),
-computes ISM contribution logos at a joint AP1+OCT4 locus (Panel A / supplement
-a–c), and (optionally) runs modiscolite to check which motifs each model learned
-(Panel B table: does the AP1 model spuriously learn OCT-SOX?).
+## Scripts
 
 ```bash
-python run_modisco.py            # ISM logos (supp a–c)
-python run_modisco.py --modisco  # also runs the slow TF-MoDISco Panel-B step
+python run_experiment.py          # Fig 4c and Supp 4d, e
+python run_modisco.py             # ISM logos (Fig 4a, Supp 4a–c)
+python run_modisco.py --modisco   # also runs TF-MoDISco
+python plot_auc_bars.py           # Supp 4d, e AUC bars
 ```
-The MoDISco step (`--modisco`) is the slowest; it reports per-model whether AP-1
-and OCT-SOX motifs are discovered, reproducing the Panel B checkmark/X table.
 
-## `run_newhead_finetune.py` — supplement: a factor still leaks into a newly fine-tuned head (env: `featleak-dl`)
+`run_experiment.py` trains the multi-task and union-trained single-task models with
+background regions added at 0%, 20%, 40% and 60% of the number of peaks and writes
+`single_vs_multi_split_violin.pdf` (4c), `single_task_auc_barplot.pdf` and
+`multi_task_auc_barplot.pdf` (Supp 4d, e).
 
-1. Train the **leaky multitask FOS+OCT4** CNN on the union of peaks.
-2. **Add a new task head** for the chosen factor (output layer 2→3; existing
-   FOS/OCT4 rows copied).
-3. **Full end-to-end fine-tune on that factor's objective only** — positives =
-   that factor's peaks, negatives = background. The new head's own training signal
-   contains **no information about the other transcription factor** (it never sees the other
-   factor's peaks as a labelled contrast), so any sensitivity it acquires to the
-   other factor's motif must come from the shared representation.
-4. Marginalize the **other factor's motif** and measure its effect on the **new
-   head** — a nonzero effect means that motif leaked in. Compared against the leak
-   motif on its own real task and the new head's own motif (legitimate signal /
-   control).
-
-Both directions are run with `--new-head`:
+## Supplementary Fig. 4f–h — fine-tuning a new output head
 
 ```bash
-python run_newhead_finetune.py --new-head oct4   # does FOS (AP-1) leak into a new OCT4 head?
-python run_newhead_finetune.py --new-head fos    # does OCT-SOX leak into a new FOS head?
+python run_newhead_finetune.py --new-head fos
 ```
 
-The **`fos`** run also trains a **single-task FOS model from scratch** as a control
-and adds it as an extra violin / logo row:
-`newhead[_fos]_finetune_effect.pdf` (leak-motif effect across heads + control),
-`newhead[_fos]_attribution_logos.pdf` (ISM logos: leak motif on its real task,
-leak motif on the new head = leak, the new head's own motif = control),
-`newhead[_fos]_finetune_stats.txt`.
+1. Train the multi-task FOS + OCT4 model on the union of peaks (20% background).
+2. Add a new FOS output (final layer 2 → 3 outputs; existing rows copied).
+3. Fine-tune end to end on the new output only, with FOS peaks as positives and GC-matched
+   background regions as negatives.
+4. Insert OCT–SOX or AP-1 into 1,000 background sequences and measure the change in each
+   output's logit; a single-task FOS model trained from scratch is the reference.
 
-**Background note:** the fine-tune negatives come from the curated GC-matched
-negatives (`gc_neg_fos` / `gc_neg_oct4`).
+Outputs: `newhead_fos_finetune_effect.pdf` (4h), `newhead_fos_attribution_logos.pdf` (4g),
+`newhead_fos_finetune_stats.txt`.
 
-## Source notebooks (published numbers)
-
-| notebook | panels | notes |
-|---|---|---|
-| `notebooks/analysis_3.ipynb` | 4a (ISM), 4c, Supp 4a–e | imports `helpers_3` / `helpers_4` (identical to the copies here). Fig 4c asterisks: two-sided Mann–Whitney U, single- vs multi-task at each background fraction, Benjamini–Hochberg across the four fractions. Supp 4a,b use the multi-task model trained with 0% background; Supp 4a–c contributions are ISM. |
-| `notebooks/panel_b_modisco_keras.ipynb` | 4b | the earlier TensorFlow/Keras version of the three models (gradient × input → TF-MoDISco), env `featleak-tf`; imports `notebooks/panel_b_keras_helpers.py`. |
-
-`run_experiment.py`, `run_modisco.py` and `run_newhead_finetune.py` reimplement these with
-the same helpers. Background sampling is unseeded, so the OCT–SOX effect of a given
-model varies between runs (e.g. the union-trained single-task model at 20% background:
-mean −3.9 in the notebook, −0.5 in a script rerun); the multi-task model is more negative
-in every run. The "single-task FOS model trained from scratch" in `run_newhead_finetune.py`
-(Supp 4h) uses the union-trained recipe (FOS labels on the union of peaks + 20% background).
+Background regions are sampled without a fixed seed, so reruns give slightly different
+effect sizes.

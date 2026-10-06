@@ -1,48 +1,40 @@
-# Figure 5 — Entanglement contributes to feature leakage
+# Figure 5 — Synthetic tasks and representation probes reveal off-target motif responses
 
-## Scripts (env: `featleak-dl`)
+Env: `featleak-dl`.
 
-### `run_simulation.py` — Panels A, B + supplement (a)
-A balanced synthetic setting: 100 random 10 bp motifs, each with a random effect
-active in a random subset of 50 tasks; labels are the summed effect of implanted
-motifs; an additive multi-task CNN is trained; each motif's effect on its
-**inactive** tasks (leakage) is measured by marginalization.
+## Notebooks
+
+| notebook | panels |
+|---|---|
+| `notebooks/simulation_analysis.ipynb` | 5b, Supp 5a |
+| `notebooks/feature_entanglement.ipynb` | 5d, 5e, Supp 5b |
+
+## Synthetic multi-task simulation (Fig. 5b, Supp. Fig. 5a)
 
 ```bash
-python run_simulation.py     # defaults: --n-samples 10000 --seed 1 --epochs 150
+python run_simulation.py --n-samples 25000 --epochs 200
 ```
-Outputs: `leakage_effect_size_correlation.pdf` (B), `effect_size_correlation.pdf`
-(supp a), `simulation_metrics.csv`.
 
+100 random 10 bp motifs, each with an effect size (0.2–2.0) on a random subset of 50
+tasks; motifs are inserted into random 2 kb sequences and each task's label is the sum of
+the effects of its active motifs. An additive multi-task CNN is trained, and each motif's
+effect on its active and inactive tasks is measured by inserting it into 100 random
+sequences.
 
-### `run_data_sweep.py` — leakage DOES depend on training-set size (non-monotonic)
-Similarily to our figure 3, we find that if you increase the amount of data, feature leakage can dissapear. 
-```bash
-python run_data_sweep.py --sizes 500 1000 2500 5000 10000 25000 50000
-```
-Outputs: `data_sweep.csv`, `data_sweep_leakage_vs_size.pdf`.
+Outputs: `leakage_effect_size_correlation.pdf` (5b), `effect_size_correlation.pdf`
+(Supp 5a), `simulation_metrics.csv`.
 
-
-### `run_entanglement.py` — Panels C, D, E + supplement (b)
-Beluga's final conv layer (`model.0.14`) activations for AP-1 vs CTCF insertions
-are correlated; an AP-1 probe trained on those activations also detects CTCF.
+## Beluga activations and AP-1 probe (Fig. 5d, e, Supp. Fig. 5b)
 
 ```bash
 python run_entanglement.py
 ```
-Outputs: `ctcf_ap1_correlation.pdf` (D), `roc_curve_comparison.pdf` (E),
-`validation_auc.pdf` (supp b).
 
+Changes in the final convolutional layer (`model.0.14`, before ReLU) caused by inserting
+AP-1 or CTCF into 100 random sequences are correlated across channel × position values. A
+probe trained on these activations to detect AP-1 is evaluated on AP-1 and on CTCF.
 
-## Source notebooks (published numbers)
+Outputs: `ctcf_ap1_correlation.pdf` (5d), `roc_curve_comparison.pdf` (5e),
+`validation_auc.pdf` (Supp 5b).
 
-| notebook | panels | notes |
-|---|---|---|
-| `notebooks/simulation_analysis.ipynb` | 5a, 5b, Supp 5a | imports `helpers` (identical to `sim_helpers.py`); r = −0.604 (off-task) and 0.895 (active-task). Run settings in the notebook: 25,000 examples, batch size 256, up to 200 epochs, no fixed seed for the motif or background sequences. |
-| `notebooks/feature_entanglement.ipynb` | 5c–e, Supp 5b | imports `notebooks/model.py` (matches `common/beluga_model.py`); r = 0.27, AP-1 / CTCF AUC 0.882 / 0.654. |
-
-The scripts reimplement these analyses. Because sequences are drawn without a fixed seed,
-reruns differ. The simulation result depends on how well the model fits: in the data-size
-sweep (`run_data_sweep.py`, `outputs/data_sweep.csv`) the off-task correlation is about
-−0.45 when the active-task fit is moderate (r 0.73–0.96) and near zero when the fit is
-near-perfect (r ≈ 0.99).
+Random sequences are not seeded, so reruns give slightly different numbers.

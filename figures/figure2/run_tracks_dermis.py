@@ -9,8 +9,8 @@ OCT-SOX is written at the flank offsets in cbpnet_helpers.TRACK_INSERT_OFFSETS
 (1, 2, 3, then 4 insertions). Writes outputs/<model>_track_data_<tag>.npz in the
 format read by run_tracks_matched.py:
 
-    python run_tracks_dermis.py --model chrombpnet  --locus chr6:162964880:162965180
-    python run_tracks_dermis.py --model alphagenome --locus chr6:162964880:162965180
+    python run_tracks_dermis.py --model chrombpnet  --locus chr6:162964880:162965140
+    python run_tracks_dermis.py --model alphagenome --locus chr6:162964880:162965140
     python run_tracks_matched.py --cbp-tag dermis --ag-tag dermis --suffix _dermis
 """
 
