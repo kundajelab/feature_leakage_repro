@@ -95,13 +95,14 @@ FIMO-affinity quartiles, via `tangermeme.ablate.ablate` (the paper's method).
 The AlphaGenome column was produced by `notebooks/supp1a_alphagenome/motif_ablations.ipynb`
 (with its `utils.py`, `ablate_motifs`): Vierstra-archetype FIMO hits, 200 per score
 quartile, one dinucleotide shuffle of the central 14 bp, effect = intact − ablated per
-DNase track. The API key in the notebook was replaced with
-`os.environ["ALPHAGENOME_API_KEY"]`.
+DNase track. It uses the AlphaGenome **API** (not the local model); the API key is read
+from `os.environ["ALPHAGENOME_API_KEY"]`. The code for the Enformer and Borzoi columns
+of Supp 1a is not in this repo.
 
 ## Supplementary Fig 2b–d — per-task volcano plots
 
 `run_volcano_alphagenome.py` (env `featleak-alphagenome`) and `run_volcano_grelu.py`
-(env `featleak-dl`) score all DNase tracks: 30 fibroblast peaks, up to 8 cumulative
+(env `featleak-dl`) score all DNase tracks: the 40 strongest cardiac-fibroblast DNase peaks (ENCFF942AKV; default `--n-bg 40`, as in the published run), up to 8 cumulative
 OCT–SOX insertions (±150/200/250/300 bp) and shuffled controls; per track, log2 signal is
 regressed on insertion number and the real-minus-shuffled slope is tested (two-sided t).
 `volcano_plot.py` colours points by Benjamini–Hochberg q < 0.05; the y-axis is raw −log10 P.

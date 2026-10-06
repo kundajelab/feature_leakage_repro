@@ -14,6 +14,14 @@ Figure 7 (`experiments/ag_deleak_finetune/`).
 
 ## Design panels (a–d) — `figure6/`, env `featleak-dl`
 
+**Warning:** without `outputs/all_results.pkl`, `run_plots.py` falls back to the legacy
+`all_results_new.pkl`. That file came from `deepsea_sequence_design_v2.py`, which pushed
+**keratinocyte up and melanocyte down** (the reverse of the figure), so do not use it for
+the paper. Regenerate the designs with `run_design.py` (melanocyte 1383 up, keratinocyte
+1367 down; asserted in the script). The published panels came from an earlier run of
+`analysis_2.ipynb` with melanocyte task 1385 (the `fdr0.01` peak track) as the on-target;
+that run's results were overwritten.
+
 ```bash
 python run_plots.py        # panels b + d (fast, no GPU; uses outputs/all_results.pkl if present, else the legacy run)
 python run_panel_c.py      # panel c (GPU: Beluga DeepSHAP of a designed sequence)

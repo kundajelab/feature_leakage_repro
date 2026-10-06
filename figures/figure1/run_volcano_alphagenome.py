@@ -8,7 +8,7 @@ p-value. Volcano: x = slope, y = -log10(p). Green = FDR-significant repressive,
 orange = significant positive, blue = n.s.
 
 Run (env: featleak-alphagenome):
-    python run_volcano_alphagenome.py --n-bg 30
+    python run_volcano_alphagenome.py --n-bg 40
 """
 
 from __future__ import annotations
@@ -83,7 +83,7 @@ def central_all(model, seq, OT):
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n-bg", type=int, default=30)
+    ap.add_argument("--n-bg", type=int, default=40)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
     OUT.mkdir(exist_ok=True)

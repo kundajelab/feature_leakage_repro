@@ -87,5 +87,18 @@ test, no multiple-testing correction.
 | Panel | Script → output |
 |---|---|
 | e (AlphaGenome bars) | `run_rest_leakage_figure.py` (env `featleak-alphagenome`) |
-| e (BPNet bars), summary | `run_bpnet_rest_leakage.py` → `plot_bpnet_vs_ag_rest.py` (env `featleak-dl`) |
-| f, g (ISM logos, profiles) | AlphaGenome: `run_rest_leakage_figure.py`; BPNet: `run_bpnet_rest_panels.py` → `plot_bpnet_rest_panels.py` |
+| e (BPNet bars), summary | `run_bpnet_rest_leakage.py` (env `featleak-tf`) → `plot_bpnet_vs_ag_rest.py` (env `featleak-dl`) |
+| f, g (ISM logos, profiles) | AlphaGenome: `run_rest_leakage_figure.py`; BPNet: `run_bpnet_rest_panels.py` (env `featleak-tf`) → `plot_bpnet_rest_panels.py` |
+
+**BPNet models.** Download each ENCODE "models" tarball and extract it into
+`models/bpnet_rest_k562/<experiment>/` (so that `fold_0/ ... fold_4/` sit inside it):
+
+| experiment | ENCODE model annotation | models file |
+|---|---|---|
+| ENCSR137ZMQ | ENCSR831SVZ | https://www.encodeproject.org/files/ENCFF980HTW/@@download/ENCFF980HTW.tar.gz |
+| ENCSR054JMQ | ENCSR759WXZ | https://www.encodeproject.org/files/ENCFF005ZXD/@@download/ENCFF005ZXD.tar.gz |
+| ENCSR000BMW | ENCSR364RHG | https://www.encodeproject.org/files/ENCFF912NJL/@@download/ENCFF912NJL.tar.gz |
+| ENCSR000ATM | ENCSR867KCV | https://www.encodeproject.org/files/ENCFF716GEH/@@download/ENCFF716GEH.tar.gz |
+
+`common/config.py` key `bpnet_rest_k562_dir` (override with `FEATLEAK_BPNET_REST_K562_DIR`).
+The AlphaGenome scripts use the local JAX model (`models/alphagenome-v1/`).

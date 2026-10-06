@@ -120,6 +120,12 @@ _REGISTRY: dict[str, list[str]] = {
         f"{OAK_ROOT}/projects/chromatin-atlas-2022/DNASE/ENCSR128GBN/"
         "chrombpnet_model_encsr880cub_bias/chrombpnet_wo_bias.h5",
     ],
+    # ENCODE BPNet models for K562 REST ChIP-seq (Supp Fig 2e-g): one directory per
+    # experiment, holding the extracted ENCODE "models" tarball (fold_0 ... fold_4).
+    "bpnet_rest_k562_dir": [
+        f"{MODELS_ROOT}/bpnet_rest_k562",
+        f"{LEGACY_ROOT}/data/bpnet_rest_k562",
+    ],
     # ---- motif resources -------------------------------------------------- #
     # Vierstra motif-archetype tables (consensus strings + annotations).
     "vierstra_motifs_tsv": [

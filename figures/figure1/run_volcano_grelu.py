@@ -8,8 +8,8 @@ y = -log10(p). Green = FDR-significant repressive (slope<0), orange = significan
 positive (slope>0), blue = n.s.  Saves a per-task CSV and the volcano PDF.
 
 Run (env: featleak-dl):
-    python run_volcano_grelu.py --model enformer --n-bg 30
-    python run_volcano_grelu.py --model borzoi   --n-bg 30
+    python run_volcano_grelu.py --model enformer --n-bg 40
+    python run_volcano_grelu.py --model borzoi   --n-bg 40
 """
 
 from __future__ import annotations
@@ -82,7 +82,7 @@ def seq_len_of(model, which):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", choices=["borzoi", "enformer"], required=True)
-    ap.add_argument("--n-bg", type=int, default=30)
+    ap.add_argument("--n-bg", type=int, default=40)
     ap.add_argument("--batch-size", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()

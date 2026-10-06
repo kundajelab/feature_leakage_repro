@@ -12,7 +12,7 @@ Models: the ENCODE BPNet models trained on each K562 REST ChIP-seq experiment
 SavedModels, predictions averaged over the 5 folds; control-track inputs set to 0
 (as allowed by the ENCODE README). Input 2,114 bp, output 1,000 bp x 2 strands.
 
-Run (env: chrombpnet, TF 2.8):
+Run (env: featleak-tf; TF 2.15 and 2.8 give identical predictions):
     python run_bpnet_rest_leakage.py --n-bg 256
 """
 
@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -40,8 +41,11 @@ def _load_tf_motifs():
 
 TF_MOTIFS = _load_tf_motifs()
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from common import config  # noqa: E402
+
 OUT = Path(__file__).parent / "outputs" / "bpnet_rest"
-MODELS = Path("/users/kobbad/feat_leakage/data/bpnet_rest_k562")
+MODELS = config.resolve("bpnet_rest_k562_dir")      # models/bpnet_rest_k562/<ENCSR>/fold_*
 EXPERIMENTS = ["ENCSR000BMW", "ENCSR137ZMQ", "ENCSR000ATM", "ENCSR054JMQ"]
 IN_LEN, OUT_LEN = 2114, 1000
 FL = [-120, 120]

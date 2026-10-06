@@ -69,7 +69,7 @@ the first time `run_grelu.py` / `run_volcano_grelu.py` run.
 | **5** | Beluga (panels c–e); the simulation trains its own CNN |
 | **6** | Beluga |
 | **7** | AlphaGenome PyTorch weights; ChromBPNet `ENCSR000EPO` (fold 0) |
-| Supp 2e–g | AlphaGenome v1 (JAX); ENCODE K562 REST BPNet models |
+| Supp 2e–g | AlphaGenome v1 (JAX); ENCODE K562 REST BPNet models in `models/bpnet_rest_k562/` (download links in `experiments/tf_chip_leakage/README.md`) |
 
 After placing files, verify everything resolves:
 
