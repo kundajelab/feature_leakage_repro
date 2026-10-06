@@ -33,3 +33,16 @@ python run_entanglement.py
 Outputs: `ctcf_ap1_correlation.pdf` (D), `roc_curve_comparison.pdf` (E),
 `validation_auc.pdf` (supp b).
 
+
+## Source notebooks (published numbers)
+
+| notebook | panels | notes |
+|---|---|---|
+| `notebooks/simulation_analysis.ipynb` | 5a, 5b, Supp 5a | imports `helpers` (identical to `sim_helpers.py`); r = −0.604 (off-task) and 0.895 (active-task). Run settings in the notebook: 25,000 examples, batch size 256, up to 200 epochs, no fixed seed for the motif or background sequences. |
+| `notebooks/feature_entanglement.ipynb` | 5c–e, Supp 5b | imports `notebooks/model.py` (matches `common/beluga_model.py`); r = 0.27, AP-1 / CTCF AUC 0.882 / 0.654. |
+
+The scripts reimplement these analyses. Because sequences are drawn without a fixed seed,
+reruns differ. The simulation result depends on how well the model fits: in the data-size
+sweep (`run_data_sweep.py`, `outputs/data_sweep.csv`) the off-task correlation is about
+−0.45 when the active-task fit is moderate (r 0.73–0.96) and near zero when the fit is
+near-perfect (r ≈ 0.99).

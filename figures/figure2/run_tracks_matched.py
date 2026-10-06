@@ -19,12 +19,20 @@ import numpy as np
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.font_manager as _fm  # noqa: E402
+for _f in ("LiberationSans-Regular.ttf", "LiberationSans-Bold.ttf"):
+    try:   # Arial-metric font, so text stays editable and matches Arial/Helvetica
+        _fm.fontManager.addfont(f"/usr/share/fonts/truetype/liberation/{_f}")
+    except (FileNotFoundError, RuntimeError):
+        pass
+matplotlib.rcParams.update({"font.family": "sans-serif",
+                            "font.sans-serif": ["Arial", "Helvetica", "Liberation Sans", "DejaVu Sans"],
+                            "pdf.fonttype": 42, "ps.fonttype": 42})
 matplotlib.rcParams["pdf.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 
 OUT = Path(__file__).parent / "outputs"
-LABELS = ["Fibroblast DNase", "1 insertion", "2 insertions", "3 insertions",
-          "4 insertions"]
+LABELS = ["No insertion", "1 OCT-SOX", "2 OCT-SOX", "3 OCT-SOX", "4 OCT-SOX"]
 
 
 def main() -> None:
@@ -55,9 +63,6 @@ def main() -> None:
         axes[0, col].set_title(f"{d['model']}\n{str(d['ylabel'])}", fontsize=9)
         axes[-1, col].set_xlabel("position relative to enhancer centre (bp)")
         axes[-1, col].set_xlim(-W, W)
-    fig.suptitle("Fig 2 C/D — OCT-SOX insertion, matched genomic window "
-                 f"(+/-{W} bp). Note the different y-axis UNITS per model.",
-                 fontsize=10)
     fig.tight_layout()
     fig.savefig(OUT / f"tracks_matched_window{args.suffix}.pdf")
     fig.savefig(OUT / f"tracks_matched_window{args.suffix}.png", dpi=110)

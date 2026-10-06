@@ -1,3 +1,5 @@
+> **Superseded.** This describes an earlier JAX version on the skin-biceps track (NTR:0000521). Figure 7 uses `finetune_dermis_torch.py` on the dermal-fibroblast track (CL:0002551); see `README.md`.
+
 # De-leaking AlphaGenome's fibroblast DNase head with a ChromBPNet oracle
 
 ## Goal

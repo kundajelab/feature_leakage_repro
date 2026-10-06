@@ -14,6 +14,9 @@ and `multi_task_auc_barplot.pdf` (supp d,e), `fig4_effects.pkl`.
 
 
 
+`plot_auc_bars.py` redraws supplement (d, e) from the manuscript run's AUCs
+(`--from-pkl` plots a fresh `run_experiment.py` result instead).
+
 ## `run_modisco.py` — Panel A/B + supplement ISM logos (env: `featleak-dl`)
 Trains the three canonical models (leaky single-task, single-task, multi-task),
 computes ISM contribution logos at a joint AP1+OCT4 locus (Panel A / supplement
@@ -58,3 +61,17 @@ leak motif on the new head = leak, the new head's own motif = control),
 
 **Background note:** the fine-tune negatives come from the curated GC-matched
 negatives (`gc_neg_fos` / `gc_neg_oct4`).
+
+## Source notebooks (published numbers)
+
+| notebook | panels | notes |
+|---|---|---|
+| `notebooks/analysis_3.ipynb` | 4a (ISM), 4c, Supp 4a–e | imports `helpers_3` / `helpers_4` (identical to the copies here). Fig 4c asterisks: two-sided Mann–Whitney U, single- vs multi-task at each background fraction, Benjamini–Hochberg across the four fractions. Supp 4a,b use the multi-task model trained with 0% background; Supp 4a–c contributions are ISM. |
+| `notebooks/panel_b_modisco_keras.ipynb` | 4b | the earlier TensorFlow/Keras version of the three models (gradient × input → TF-MoDISco), env `featleak-tf`; imports `notebooks/panel_b_keras_helpers.py`. |
+
+`run_experiment.py`, `run_modisco.py` and `run_newhead_finetune.py` reimplement these with
+the same helpers. Background sampling is unseeded, so the OCT–SOX effect of a given
+model varies between runs (e.g. the union-trained single-task model at 20% background:
+mean −3.9 in the notebook, −0.5 in a script rerun); the multi-task model is more negative
+in every run. The "single-task FOS model trained from scratch" in `run_newhead_finetune.py`
+(Supp 4h) uses the union-trained recipe (FOS labels on the union of peaks + 20% background).

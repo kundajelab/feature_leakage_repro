@@ -72,6 +72,12 @@ _REGISTRY: dict[str, list[str]] = {
         f"{MODELS_ROOT}/alphagenome-v1",
         f"{OAK_ROOT}/kobbad/alphagenome/alphagenome-v1",
     ],
+    # AlphaGenome PyTorch port (alphagenome-pytorch), all-folds weights: same checkpoint
+    # as the JAX all_folds model above. https://huggingface.co/gtca/alphagenome_pytorch
+    "alphagenome_pytorch_weights": [
+        f"{MODELS_ROOT}/alphagenome-pytorch/model_all_folds.safetensors",
+        f"{OAK_ROOT}/rrastogi/external_repos/alphagenome-pytorch/.models/model_all_folds.safetensors",
+    ],
     # SEI model weights (keep sei.py architecture file alongside the .pth).
     "sei_weights": [
         f"{MODELS_ROOT}/sei/sei.pth",
@@ -101,7 +107,8 @@ _REGISTRY: dict[str, list[str]] = {
         f"{OAK_ROOT}/projects/chromatin-atlas-2022/DNASE/ENCSR000EPO/"
         "chrombppnet_model_encsr283tme_bias/chrombpnet_wo_bias.h5",
     ],
-    # Borzoi/Enformer-matched fibroblast DNase ChromBPNet (ENCSR000EOR).
+    # ChromBPNet for ENCSR000EOR = fibroblast of VILLOUS MESENCHYME (not dermis; the
+    # Borzoi/Enformer-matched dermis model is `chrombpnet_dermis`, ENCSR000EPO). Unused.
     "chrombpnet_encsr000eor": [
         f"{MODELS_ROOT}/chrombpnet/ENCSR000EOR_chrombpnet_wo_bias.h5",
         f"{OAK_ROOT}/projects/chromatin-atlas-2022/DNASE/ENCSR000EOR/"
@@ -116,13 +123,16 @@ _REGISTRY: dict[str, list[str]] = {
     # ---- motif resources -------------------------------------------------- #
     # Vierstra motif-archetype tables (consensus strings + annotations).
     "vierstra_motifs_tsv": [
+        f"{DATA_DIR}/motifs/motifs.tsv",
         f"{LEGACY_ROOT}/ap1_counting/data/motifs.tsv",
     ],
     "vierstra_motif_annotations_xlsx": [
+        f"{DATA_DIR}/motifs/motif_annotations.xlsx",
         f"{LEGACY_ROOT}/ap1_counting/data/motif_annotations.xlsx",
     ],
     # DeepSEA/Beluga task (cell-type x assay) names, one per line, 2002 rows.
     "beluga_task_names": [
+        f"{DATA_DIR}/beluga/deepsea_beluga_names.txt",
         f"{LEGACY_ROOT}/all_ap1_motifs/deepsea_beluga_names.txt",
     ],
     # JASPAR database for TF-MoDISco `report` annotation (Fig 4B).
@@ -141,12 +151,23 @@ _REGISTRY: dict[str, list[str]] = {
     "assoc_ap1": ["/users/jmschr/proj/exps/associations/ap-1.txt"],
     "assoc_hnf4": ["/users/jmschr/proj/exps/associations/hnf4.txt"],
     "assoc_ctcf": ["/users/jmschr/proj/exps/associations/ctcf.txt"],
+    # ENCODE cCREs V3 (GRCh38), used to restrict Fig 1 E-H hits to regulatory
+    # elements. https://downloads.wenglab.org/V3/GRCh38-cCREs.bed
+    "encode_ccre_bed": [f"{LEGACY_ROOT}/data/encode_dhs/GRCh38-cCREs.bed"],
     # ---- peak / signal data ---------------------------------------------- #
     # Cardiac-fibroblast DNase peaks + signal (Fig 1/2 AlphaGenome & ChromBPNet).
     "peaks_fibroblast": [f"{LEGACY_ROOT}/alphagenome/ENCFF942AKV.bed.gz"],
     "bigwig_fibroblast_ag": [f"{LEGACY_ROOT}/alphagenome/ENCFF424KBD.bigWig"],
+    # Cardiac fibroblast (adult, paired-end) DNase, ENCSR000ENI: the ENCODE experiment
+    # behind AlphaGenome's CL:0002548 DNase track (Fig 1A observed track).
+    "bigwig_cardiac_fibroblast_eni": [f"{LEGACY_ROOT}/alphagenome/ENCFF258OVM.bigWig"],
     # Peaks used for Borzoi/Enformer fibroblast panels.
     "peaks_enformer_fibroblast": [f"{LEGACY_ROOT}/enformer_v2/ENCFF184KAM.bed.gz"],
+    # ---- the ONE fibroblast used for every model (ENCODE ENCSR000EPO, fibroblast of
+    # dermis, female adult): AlphaGenome CL:0002551 (DNase channel 60), Borzoi/Enformer
+    # target ENCFF302JEV, ChromBPNet `chrombpnet_dermis`.
+    "peaks_dermis": [f"{LEGACY_ROOT}/enformer_v2/ENCFF184KAM.bed.gz"],
+    "bigwig_dermis": [f"{LEGACY_ROOT}/enformer_v2/ENCFF302JEV.bigWig"],
     "bigwig_enformer_fibroblast": [f"{LEGACY_ROOT}/enformer_v2/ENCFF361BTT.bigWig"],
     # Skin-biceps fibroblast DNase (AlphaGenome native track NTR:0000521, the OCT-SOX
     # *leaking* head we fine-tune). Two matched ENCODE single-ended DNase experiments
@@ -166,17 +187,21 @@ _REGISTRY: dict[str, list[str]] = {
     # ---- Fig 4 ChIP-seq peak sets ---------------------------------------- #
     # FOS/AP1 ChIP-seq in fibroblast (ENCSR124AIG).
     "chip_fos_fibroblast": [
+        f"{DATA_DIR}/figure4/ENCSR124AIG_peaks_inliers.bed.gz",
         f"{LEGACY_ROOT}/data/bed_files/fibro_ipsc/ENCSR124AIG_peaks_inliers.bed.gz",
     ],
     # POU5F1/OCT4 ChIP-seq in hESC (ENCSR000BMU).
     "chip_oct4_hesc": [
+        f"{DATA_DIR}/figure4/ENCSR000BMU_peaks_inliers.bed.gz",
         f"{LEGACY_ROOT}/data/bed_files/fibro_ipsc/ENCSR000BMU_peaks_inliers.bed.gz",
     ],
     # GC-matched background regions for each ChIP experiment.
     "gc_neg_fos": [
+        f"{DATA_DIR}/figure4/ENCSR124AIG_gc_neg_only.bed.gz",
         f"{OAK_ROOT}/vir/tfatlas/processed_data/ENCSR124AIG/gc_neg_only.bed.gz",
     ],
     "gc_neg_oct4": [
+        f"{DATA_DIR}/figure4/ENCSR000BMU_gc_neg_only.bed.gz",
         f"{OAK_ROOT}/vir/tfatlas/processed_data/ENCSR000BMU/gc_neg_only.bed.gz",
     ],
 }

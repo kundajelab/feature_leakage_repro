@@ -22,6 +22,15 @@ from scipy import stats
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.font_manager as _fm  # noqa: E402
+for _f in ("LiberationSans-Regular.ttf", "LiberationSans-Bold.ttf"):
+    try:   # Arial-metric font, so text stays editable and matches Arial/Helvetica
+        _fm.fontManager.addfont(f"/usr/share/fonts/truetype/liberation/{_f}")
+    except (FileNotFoundError, RuntimeError):
+        pass
+matplotlib.rcParams.update({"font.family": "sans-serif",
+                            "font.sans-serif": ["Arial", "Helvetica", "Liberation Sans", "DejaVu Sans"],
+                            "pdf.fonttype": 42, "ps.fonttype": 42})
 matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
@@ -56,12 +65,14 @@ def styled_box(logfc, label, outstem, ylim=None):
 
 
 def main() -> None:
-    # AlphaGenome: local-window log2FC from cached before/after arrays
-    b = np.load(OUT / "fig1_alphagenome_octsox_before_local.npy")
-    a = np.load(OUT / "fig1_alphagenome_octsox_after_local.npy")
-    ag = np.log2((b + EPS) / (a + EPS))
-    cbp_path = OUT / "fig1_chrombpnet_octsox_logfc.npy"
+    # Both models read ENCSR000EPO (fibroblast of dermis) and score the SAME OCT-SOX
+    # sites: run_chrombpnet_logfc.py (ChromBPNet dermis) and run_alphagenome_torch.py
+    # (AlphaGenome CL:0002551, 2,048 bp input: run with --seq-len 2048 --out-suffix _2kb).
+    ag = np.load(OUT / "fig1_alphagenome_octsox_logfc_dermis_2kb.npy")
+    cbp_path = OUT / "fig1_chrombpnet_octsox_logfc_dermis.npy"
     cbp = np.load(cbp_path) if cbp_path.exists() else None
+    if cbp is not None:
+        cbp = cbp[:len(ag)]          # same sites, same order (first n of the saved list)
 
     # shared y-limits from the WHISKER extent (fliers are hidden), so the boxes
     # are readable and not squashed by a few extreme-ratio outliers.

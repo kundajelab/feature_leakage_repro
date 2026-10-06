@@ -19,3 +19,17 @@ how inserting each of ~37 AP-1-dissimilar motifs changes the predicted count
 - `motif_effect_results.npz` — per-motif leakage effect arrays.
 
 
+
+## Source notebook (published numbers)
+
+`notebooks/train_ap_1_counting.ipynb` is the notebook that produced Figure 3 and
+Supplementary Fig 3, with its saved outputs (held-out Pearson r = 0.776; 23 of 37 motifs
+significant after Benjamini–Hochberg; top four CTCF(L), EWSR1–FLI1, NFKB1, ZIC1). It imports
+`notebooks/model.py`, whose Beluga, dataset and training code matches `common/beluga_model.py`.
+Relative paths in the notebook (`../deepSEA_negatives/`, `../ap1_counting/data/`) refer to
+the original analysis directory, `/users/kobbad/feat_leakage/` (Beluga weights and the
+Vierstra motif tables; see `common/config.py`).
+
+`run.py` reimplements the notebook. Training and background sequences are generated
+without a fixed seed, so a rerun gives similar but not identical numbers (e.g. r ≈ 0.76,
+19–20 of 37 motifs significant).

@@ -19,6 +19,8 @@ def annotate_with_peak_distances(motif_hits_path, peaks_path) -> pd.DataFrame:
     hits = pd.read_csv(motif_hits_path, sep="\t")
     peaks = pd.read_csv(peaks_path, sep="\t", header=None)
 
+    # FIMO writes trailing comment lines; drop them before the chromosome-name filter
+    hits = hits.dropna(subset=["sequence_name"])
     hits = hits[hits.sequence_name.astype(str).apply(lambda x: len(x) <= 5).values]
     hits = hits.dropna().copy()
     hits["start"] = hits["start"].astype(int)
@@ -45,7 +47,7 @@ def annotate_with_peak_distances(motif_hits_path, peaks_path) -> pd.DataFrame:
 
 
 def ablate_motifs(motif_hits, motif_length, fasta, seq_len=2114, num_loci=1000,
-                  random_state=None):
+                  random_state=None, return_sites=False):
     """Extract loci centred on motif hits and dinuc-shuffle the central window.
 
     Returns (loci, loci_ablated) one-hot tensors of shape (N, 4, seq_len).
@@ -65,6 +67,8 @@ def ablate_motifs(motif_hits, motif_length, fasta, seq_len=2114, num_loci=1000,
     a0 = seq_len // 2 - motif_length // 2
     a1 = seq_len // 2 + motif_length // 2
     loci_ablated = dinucleotide_shuffle(loci, start=a0, end=a1, n=1).squeeze()
+    if return_sites:
+        return loci, loci_ablated, hits_sampled[mask.numpy()].reset_index(drop=True)
     return loci, loci_ablated
 
 

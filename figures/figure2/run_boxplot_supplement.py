@@ -19,6 +19,15 @@ import pandas as pd
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.font_manager as _fm  # noqa: E402
+for _f in ("LiberationSans-Regular.ttf", "LiberationSans-Bold.ttf"):
+    try:   # Arial-metric font, so text stays editable and matches Arial/Helvetica
+        _fm.fontManager.addfont(f"/usr/share/fonts/truetype/liberation/{_f}")
+    except (FileNotFoundError, RuntimeError):
+        pass
+matplotlib.rcParams.update({"font.family": "sans-serif",
+                            "font.sans-serif": ["Arial", "Helvetica", "Liberation Sans", "DejaVu Sans"],
+                            "pdf.fonttype": 42, "ps.fonttype": 42})
 matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "sans-serif",
                            "font.size": 12, "axes.spines.top": False, "axes.spines.right": False})
 import matplotlib.pyplot as plt  # noqa: E402
@@ -31,7 +40,7 @@ OUT = Path(__file__).parent / "outputs"
 def main() -> None:
     enf = np.load(OUT / "grelu_enformer_canonical.npz")
     bor = np.load(OUT / "grelu_borzoi_canonical.npz")
-    cbp = pd.read_csv(OUT / "cbp_octsox_specificity_dermis.csv").specificity.values
+    cbp = pd.read_csv(OUT / "cbp_octsox_specificity_dermis_matched.csv").specificity.values
     series = [("Enformer\n(dermis)", enf["real"] - enf["shuf"], MULTI),
               ("Borzoi\n(dermis)", bor["real"] - bor["shuf"], MULTI),
               ("ChromBPNet\n(dermis)", cbp, CBP)]

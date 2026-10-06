@@ -23,6 +23,15 @@ from scipy import stats
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.font_manager as _fm  # noqa: E402
+for _f in ("LiberationSans-Regular.ttf", "LiberationSans-Bold.ttf"):
+    try:   # Arial-metric font, so text stays editable and matches Arial/Helvetica
+        _fm.fontManager.addfont(f"/usr/share/fonts/truetype/liberation/{_f}")
+    except (FileNotFoundError, RuntimeError):
+        pass
+matplotlib.rcParams.update({"font.family": "sans-serif",
+                            "font.sans-serif": ["Arial", "Helvetica", "Liberation Sans", "DejaVu Sans"],
+                            "pdf.fonttype": 42, "ps.fonttype": 42})
 matplotlib.rcParams.update({"pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "sans-serif",
                            "font.size": 12, "axes.spines.top": False, "axes.spines.right": False})
 import matplotlib.pyplot as plt  # noqa: E402
@@ -52,14 +61,15 @@ def _violin(ax, series, ylabel, title):
 
 
 def main() -> None:
-    ag = pd.read_csv(OUT / "ag_octsox_specificity.csv").specificity.values
-    cbp = pd.read_csv(OUT / "cbp_octsox_specificity_skinbiceps.csv").specificity.values
+    # both models read the SAME ENCODE experiment (ENCSR000EPO, fibroblast of dermis)
+    ag = pd.read_csv(OUT / "ag_octsox_specificity_dermis_len524288.csv").specificity.values
+    cbp = pd.read_csv(OUT / "cbp_octsox_specificity_dermis_matched.csv").specificity.values
     n = min(len(ag), len(cbp))
     series = [("AlphaGenome\n(multi-task)", ag, MULTI), ("ChromBPNet\n(single-task)", cbp, CBP)]
 
     fig, ax = plt.subplots(figsize=(5, 5.2))
     _violin(ax, series, "OCT-SOX effect  (shuffle-corrected log2FC)",
-            f"OCT-SOX insertion across {n} fibroblast enhancers")
+            f"OCT-SOX insertion across {n} dermal fibroblast enhancers\n(ENCODE ENCSR000EPO)")
     fig.tight_layout()
     for ext in ("pdf", "png", "svg"):
         fig.savefig(OUT / f"panelb_octsox_specificity.{ext}", dpi=150 if ext == "png" else None,

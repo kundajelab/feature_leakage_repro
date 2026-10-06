@@ -71,3 +71,21 @@ Output: `marginalization_profiles_K562.pdf` (before = gray, after = red, dashed
 line = insertion site). The control (MAX->MAX) shows a peak at the insertion;
 the leakage pairs (CTCF->JUND, REST->SPI1, NRF1->YY1, AP-1->MAX) show the *wrong*
 TF's ChIP signal rising where a motif it does not bind was inserted.
+
+## Supplementary Fig 2e–g — REST ChIP-seq: AlphaGenome vs ENCODE BPNet
+
+Design (identical for both models): random backgrounds with the REST motif at the centre;
+NRF1, YY1, MYC/MAX E-box or CTCF written twice at ±120 bp; 3 shuffled versions of each
+query motif as controls; effect = log2FC of predicted REST ChIP counts over the central
+600 bp versus the REST-motif-only background. AlphaGenome: K562 REST tracks averaged,
+16,384 bp input, 12 backgrounds (for AlphaGenome the 3 shuffle signals are averaged before
+the log). BPNet: ENCODE K562 REST models, 5 folds averaged, 256 backgrounds; the matched
+experiments are ENCSR137ZMQ and ENCSR054JMQ, and the unmatched ENCSR000BMW and ENCSR000ATM
+are shown as additional controls. Real vs shuffled: two-sided paired Wilcoxon signed-rank
+test, no multiple-testing correction.
+
+| Panel | Script → output |
+|---|---|
+| e (AlphaGenome bars) | `run_rest_leakage_figure.py` (env `featleak-alphagenome`) |
+| e (BPNet bars), summary | `run_bpnet_rest_leakage.py` → `plot_bpnet_vs_ag_rest.py` (env `featleak-dl`) |
+| f, g (ISM logos, profiles) | AlphaGenome: `run_rest_leakage_figure.py`; BPNet: `run_bpnet_rest_panels.py` → `plot_bpnet_rest_panels.py` |

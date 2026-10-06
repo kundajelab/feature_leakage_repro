@@ -20,7 +20,7 @@ models/
   chrombpnet/
     ENCSR000ENH_chrombpnet_wo_bias.h5   # cardiac fibroblast DNase   (Fig 2 B,D,F)
     ENCSR562ACY_chrombpnet_wo_bias.h5   # skin-biceps (AlphaGenome-matched)
-    ENCSR000EPO_chrombpnet_wo_bias.h5   # dermis (Enformer/Borzoi-matched)
+    ENCSR000EPO_chrombpnet_wo_bias.h5   # dermis, fold 0 (matched to all multi-task models; Figs 1c, 2, 7)
     ENCSR000EOR_chrombpnet_wo_bias.h5   # fibroblast (Fig 2 supplement)
     ENCSR128GBN_chrombpnet_wo_bias.h5   # spleen (Fig 2 supplement)
 ```
@@ -50,7 +50,7 @@ here under the filename in the table below.
 |---|---|---|
 | `chrombpnet/ENCSR000ENH_chrombpnet_wo_bias.h5` | ENCSR000ENH | cardiac fibroblast |
 | `chrombpnet/ENCSR562ACY_chrombpnet_wo_bias.h5` | ENCSR562ACY | fibroblast of skin of left biceps (AlphaGenome-matched) |
-| `chrombpnet/ENCSR000EPO_chrombpnet_wo_bias.h5` | ENCSR000EPO | fibroblast of dermis (Enformer/Borzoi-matched) |
+| `chrombpnet/ENCSR000EPO_chrombpnet_wo_bias.h5` | ENCSR000EPO | fibroblast of dermis, fold 0 (matched to AlphaGenome, Enformer, Borzoi) ; **shipped with this repo**, as it is not in the public zoo |
 | `chrombpnet/ENCSR000EOR_chrombpnet_wo_bias.h5` | ENCSR000EOR | fibroblast |
 | `chrombpnet/ENCSR128GBN_chrombpnet_wo_bias.h5` | ENCSR128GBN | spleen |
 
@@ -62,10 +62,14 @@ the first time `run_grelu.py` / `run_volcano_grelu.py` run.
 
 | Figure | Models required |
 |--------|-----------------|
-| **1** (A, C, E–H) | Beluga; AlphaGenome (Panel C/A); Borzoi + Enformer via gReLU (auto); ChromBPNet cardiac (log2FC comparison) |
-| **2** | ChromBPNet cardiac (`ENCSR000ENH`); AlphaGenome; (supplement: `ENCSR000EOR`, `ENCSR128GBN`, matched skin-biceps/dermis) |
+| **1** (A, C, E–H) | Beluga; AlphaGenome PyTorch weights (A, C); Borzoi + Enformer via gReLU (auto); ChromBPNet `ENCSR000EPO` (C) |
+| **2** | AlphaGenome PyTorch weights; Borzoi + Enformer via gReLU; ChromBPNet `ENCSR000EPO` (fold 0) |
 | **3** | Beluga only |
 | **4** | none — the FOS/OCT4 CNNs are trained from scratch from ENCODE peak files (see `data/README.md`) |
+| **5** | Beluga (panels c–e); the simulation trains its own CNN |
+| **6** | Beluga |
+| **7** | AlphaGenome PyTorch weights; ChromBPNet `ENCSR000EPO` (fold 0) |
+| Supp 2e–g | AlphaGenome v1 (JAX); ENCODE K562 REST BPNet models |
 
 After placing files, verify everything resolves:
 

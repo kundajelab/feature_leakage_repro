@@ -15,20 +15,24 @@
 #                         the Beluga parts of Fig 1.
 #   featleak-alphagenome  JAX + local AlphaGenome v1 model. AlphaGenome panels
 #                         of Figs 1 and 2.
+#   featleak-agtorch      PyTorch 2.5 + alphagenome-pytorch (all-folds v1 weights).
+#                         Full-length (524,288 bp) AlphaGenome runs: Figs 1c, 2b and
+#                         the Fig 7 fine-tuning.
 #   featleak-tf           TensorFlow/Keras 2.15 + tf-modisco. Optional; only for
 #                         the TF-Keras variants matching the Methods text.
 #
 # Usage:
-#   bash setup_envs.sh                 # clone all three
-#   bash setup_envs.sh --from-yml      # build all three from yml
+#   bash setup_envs.sh                 # clone all four
+#   bash setup_envs.sh --from-yml      # build all four from yml
 #   bash setup_envs.sh --clone featleak-dl   # just one
 set -euo pipefail
 
 MODE="--clone"
-declare -a WANT=(featleak-dl featleak-alphagenome featleak-tf)
+declare -a WANT=(featleak-dl featleak-alphagenome featleak-agtorch featleak-tf)
 declare -A SRC=(
   [featleak-dl]=alphagenome-env
   [featleak-alphagenome]=alphagenome_research
+  [featleak-agtorch]=agpt
   [featleak-tf]=feat_leak
 )
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

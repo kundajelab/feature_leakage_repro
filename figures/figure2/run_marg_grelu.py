@@ -57,7 +57,9 @@ def predict_central(model, seqs, seq_len, task_idx, w_bins, batch_size):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", choices=["borzoi", "enformer"], required=True)
-    ap.add_argument("--n-loci", type=int, default=40)
+    ap.add_argument("--n-loci", type=int, default=120)
+    ap.add_argument("--peaks-key", default="peaks_dermis",
+                    help="enhancer substrate: dermis fibroblast peaks (ENCSR000EPO)")
     ap.add_argument("--batch-size", type=int, default=None)
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -73,7 +75,7 @@ def main() -> None:
     fib_idx = fib.index.to_numpy()
     w_bins = max(1, round(READOUT_HALF / BIN_SIZE[args.model]))
 
-    peaks = pd.read_csv(config.resolve("peaks_fibroblast"), sep="\t", header=None)
+    peaks = pd.read_csv(config.resolve(args.peaks_key), sep="\t", header=None)
     peaks = peaks.rename(columns={0: "chrom", 1: "start", 2: "end", 6: "signal"})
     peaks = peaks[peaks.chrom.isin(["chr" + str(i) for i in range(1, 23)])]
     top = peaks.sort_values("signal", ascending=False).head(args.n_loci * 2).reset_index(drop=True)

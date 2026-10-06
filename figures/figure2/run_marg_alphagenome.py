@@ -58,10 +58,17 @@ def csum(fwd, params, state, seqs):
 
 
 def main() -> None:
+    global SEQ_LEN, C0
     ap = argparse.ArgumentParser()
     ap.add_argument("--n-loci", type=int, default=120)
     ap.add_argument("--peaks-key", default="peaks_fibroblast")
+    ap.add_argument("--channel", type=int, default=CH,
+                    help="AlphaGenome DNase channel (207 skin biceps, 60 dermis CL:0002551)")
+    ap.add_argument("--tag", default="", help="suffix for the output csv")
+    ap.add_argument("--seq-len", type=int, default=SEQ_LEN,
+                    help="AlphaGenome input length (bp); the readout stays the central 300 bp")
     args = ap.parse_args()
+    SEQ_LEN, C0 = args.seq_len, args.seq_len // 2
     OUT.mkdir(parents=True, exist_ok=True)
     import pyfaidx
     fa = pyfaidx.Fasta(str(config.resolve("hg38_fasta")))
@@ -70,7 +77,8 @@ def main() -> None:
     peaks = peaks[peaks.chrom.isin(["chr" + str(i) for i in range(1, 23)])]
     peaks = peaks.sort_values("signal", ascending=False).head(args.n_loci)
 
-    model = ft_core.load_model(); fwd = ft_core.make_dnase_forward(ft_core.get_apply_fn(model))
+    model = ft_core.load_model()
+    fwd = ft_core.make_dnase_forward(ft_core.get_apply_fn(model), channel=args.channel)
     params, state = model._params, model._base_model._state
     mid = SEQ_LEN // 2
     shuf = shuffled_motifs(OCT_SOX, K_SHUF)
@@ -89,12 +97,12 @@ def main() -> None:
     lfc_real = np.log2((sR + EPS) / (s0 + EPS)); lfc_shuf = np.log2((sS + EPS) / (s0 + EPS))
     spec = lfc_real - lfc_shuf
     pd.DataFrame({"log2fc_real": lfc_real, "log2fc_shuf": lfc_shuf, "specificity": spec}).to_csv(
-        OUT / "ag_octsox_specificity.csv", index=False)
+        OUT / f"ag_octsox_specificity{args.tag}.csv", index=False)
     w = wilcoxon(spec, alternative="less")
-    print(f"AlphaGenome (skin-biceps ch207, 2kb) OCT-SOX over {len(spec)} enhancers: "
+    print(f"AlphaGenome (DNase ch{args.channel}, 2kb) OCT-SOX over {len(spec)} enhancers: "
           f"raw median={np.median(lfc_real):+.4f}  SPECIFICITY median={np.median(spec):+.4f} "
           f"(Wilcoxon<0 p={w.pvalue:.3g})")
-    print("done ->", OUT / "ag_octsox_specificity.csv")
+    print("done ->", OUT / f"ag_octsox_specificity{args.tag}.csv")
 
 
 if __name__ == "__main__":

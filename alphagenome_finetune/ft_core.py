@@ -44,6 +44,9 @@ FASTA = "/oak/stanford/groups/akundaje/jmschr/common/hg38/hg38.fa"
 
 # DNase NTR:0000521 "fibroblast of skin of left biceps"
 DNASE_SKIN_BICEPS_CHANNEL = 207
+# CL:0002551 fibroblast of dermis (ENCODE ENCSR000EPO): the fibroblast experiment shared
+# with Borzoi/Enformer (ENCFF302JEV) and ChromBPNet (chrombpnet_dermis).
+DNASE_DERMIS_CHANNEL = 60
 DNASE_ONTOLOGY = "NTR:0000521"
 
 HUMAN_ORGANISM_INDEX = 0  # dna_model.convert_to_organism_index(HOMO_SAPIENS) == 0
