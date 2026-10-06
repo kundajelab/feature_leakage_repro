@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-"""Figure 2 supplement: OCT-SOX specificity for Enformer / Borzoi (gReLU).
+"""Compute the Enformer / Borzoi OCT-SOX insertion effect (real vs shuffled motif) with gReLU (Figure 2 supplement).
 
-Same substrate (top fibroblast peaks), same 4 flank insertions, same composition-
-matched shuffle control as run_marg_{alphagenome,chrombpnet}.py. For the canonical
-paper fibroblast-DNase task ENCFF302JEV (fibroblast of dermis), record the per-enhancer
-log2FC after inserting real OCT-SOX and shuffled OCT-SOX; the shuffle-corrected
-SPECIFICITY = log2FC(real) - log2FC(shuffled). Writes grelu_<model>_canonical.npz
-(keys: real, shuf) which run_boxplot_supplement.py turns into specificity.
+Outputs (outputs/): grelu_<model>_canonical.npz (keys real, shuf).
 
 Run (env: featleak-dl):
     python run_marg_grelu.py --model enformer --n-loci 40

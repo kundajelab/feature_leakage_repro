@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-"""Fig 2 c/d OCT-SOX insertion tracks in the paper's stacked spiky format,
-BOTH models on the SAME bp window.
+"""Plot stacked AlphaGenome and ChromBPNet OCT-SOX insertion tracks at the chr17 example locus (Figure 2c/d).
 
-Reproduces the attached-screenshot layout (5 stacked base-resolution tracks per
-model, cumulative OCT-SOX-insertion dashes, 'Predicted Accessibility' axis) but
-uses the good new-Fig2 example locus chr17:76,671,700-76,671,820 with the correct
-cell types / scales: AlphaGenome skin-biceps fibroblast DNase (peak collapses ->
-leakage) and ChromBPNet fibroblast (exp-count profile, holds -> no leakage).
-Both panels share a matched +/-W bp window. No diagonal zoom dashes.
+Outputs (outputs/): tracks_screenshot_matched.{pdf,png}.
 
-Run (any env): python run_tracks_screenshot.py --window 500
+Run (env: featleak-dl):
+    python run_tracks_screenshot.py --window 500
 """
 
 from __future__ import annotations

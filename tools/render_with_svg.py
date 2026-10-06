@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-"""Run a figure script with Illustrator-ready settings + automatic SVG export.
+"""Run a figure script with editable-text font settings and save an SVG next to every PDF it writes.
 
-Forces editable fonts (pdf/ps fonttype 42, svg.fonttype='none' so SVG text stays
-as <text>, not outlines) and monkeypatches Figure.savefig so that every ``*.pdf``
-a script writes also gets a companion ``*.svg`` at the same path. No edits to the
-target script are needed.
-
-Usage:
+Run:
     python tools/render_with_svg.py <script.py> [script args...]
 """
 

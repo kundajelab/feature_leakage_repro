@@ -1,15 +1,8 @@
 #!/usr/bin/env python
-"""Figure 5C/D/E + supplement (b): entanglement of Beluga hidden activations.
-
-Reproduces the evidence that AP-1 and CTCF motifs share overlapping internal
-representations in Beluga's final conv layer (model.0.14):
-  * Panel D: scatter of mean AP-1 vs CTCF activation deltas (r ~ 0.27).
-  * Panel E: an AP-1 probe trained on those activations also detects CTCF
-             above chance (AP1 AUC ~ 0.88, CTCF AUC ~ 0.65).
-  * Supplement (b): probe validation AUC per epoch.
+"""Compare AP-1 and CTCF activations in Beluga's final conv layer and train an AP-1 activation probe (Figure 5C-E, Supplementary b).
 
 Outputs (outputs/): ctcf_ap1_correlation.pdf, roc_curve_comparison.pdf,
-    validation_auc.pdf, entanglement_metrics.txt.
+validation_auc.pdf, entanglement_metrics.txt.
 
 Run (env: featleak-dl):
     python run_entanglement.py

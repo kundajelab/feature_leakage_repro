@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-"""Check AlphaGenome shows OCT-SOX repression at the clean candidate enhancers.
+"""Plot AlphaGenome fibroblast DNase profiles at the top-ranked enhancers with 0-4 OCT-SOX insertions.
 
-For the top ChromBPNet-clean enhancers, run the same 0-4 OCT-SOX insertion and
-plot AlphaGenome's fibroblast DNase profile. We want a locus where AlphaGenome's
-peak SHRINKS with insertions (leakage) while ChromBPNet's stays stable -- the
-ideal replacement example for Fig 2 C/D.
+Outputs (outputs/): ag_candidate_insertions.pdf.
 
 Run (env: featleak-alphagenome):
     python run_ag_candidates.py

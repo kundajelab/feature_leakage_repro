@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-"""Data for the REST-BPNet version of the AlphaGenome REST leakage panel.
+"""Compute ISM and predicted REST ChIP profiles for one REST BPNet model (Supplementary Fig. 2f-g).
 
-For one ENCODE REST BPNet model (K562; 5-fold ensemble), computes the same three
-readouts as run_rest_leakage_figure.py does for AlphaGenome:
-  b  ISM -> REST ChIP (central 600 bp counts): REST motif at the centre (on-target)
-     and each leaking motif at the +120 bp flank copy; ref-base contribution
-     = prediction minus mean over the 4 bases, averaged over --n-ism backgrounds
-  c  mean predicted REST ChIP profile (both strands) over --n-bg backgrounds:
-     REST motif only, + NRF1 / YY1 (real), + NRF1 / YY1 (shuffled)
-Panel a (log2FC real vs shuffled) comes from run_bpnet_rest_leakage.py.
+Outputs (outputs/bpnet_rest/): bpnet_rest_panels_<experiment>.npz.
 
-Run (env: chrombpnet, TF 2.8):
-    python run_bpnet_rest_panels.py --experiment ENCSR000BMW
+Run (env: featleak-tf):
+    python run_bpnet_rest_panels.py --experiment ENCSR137ZMQ
 """
 
 from __future__ import annotations

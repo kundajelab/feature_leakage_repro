@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-"""AlphaGenome central fibroblast-DNase change under OCT-SOX insertion (0..4).
-Run (env: featleak-alphagenome): python run_ag_quantify.py
+"""Quantify AlphaGenome central fibroblast DNase signal at the top-ranked enhancers with 0-4 OCT-SOX insertions.
+
+Outputs (outputs/): alphagenome_quant.csv.
+
+Run (env: featleak-alphagenome):
+    python run_ag_quantify.py
 """
 from __future__ import annotations
 import sys

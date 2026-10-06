@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-"""Figure 7 panels b-d from finetune_dermis_torch.py outputs (dermis-matched, full context).
+"""Plot Figure 7 panels b and d (and optionally c) from finetune_dermis_torch.py outputs.
 
-  b  fidelity: Pearson r vs observed ENCFF302JEV, held-out chr8/9 16 kb windows
-  c  ISM at the held-out OCT-SOX example, before vs after fine-tuning
-  d  log2FC after a single OCT-SOX insertion (held-out chr8/9 enhancers):
-     AlphaGenome before, after, and the ChromBPNet referee
+Outputs (outputs/dermis_torch/): fig7_b_fidelity.{pdf,png}, fig7_d_octsox_box.{pdf,png},
+fig7_c_ism.{pdf,png} if the ISM npz exists.
 
-Run (any env with matplotlib + logomaker):  python plot_fig7_dermis.py
+Run (env: featleak-dl):
+    python plot_fig7_dermis.py
 """
 
 from __future__ import annotations

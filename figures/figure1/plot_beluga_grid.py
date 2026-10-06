@@ -1,18 +1,10 @@
 #!/usr/bin/env python
-"""Plot Figure 1 E-H from run_beluga_grid.py outputs.
+"""Plot Figure 1 E-H (Beluga motif effects by affinity quartile) from run_beluga_grid.py outputs.
 
-One PDF per motif column (four stacked method rows) plus a full 4x4 grid PDF.
-Each point is the mean effect over the hits of one affinity quartile for one
-Beluga DNase task; tasks are sorted by the strongest-quartile (Q4) mean.
+Outputs (outputs/beluga_grid/plots/): fig1_EH_grid_<tag>.pdf/.png, one
+fig1_<e|f|g|h>_<motif>_<tag>.pdf per motif, and summary_<tag>.tsv.
 
-Options:
-    --hit-set genome|ccre     which hit sample to plot
-    --band none|sd|ci95       shading around the Q4 means (+/-1 SD across hits,
-                              or the 95% CI of the mean)
-    --mark-sig                rug under the axis for tasks whose Q4 effect is
-                              significantly < 0 (Wilcoxon signed-rank, BH FDR<0.05)
-
-Run (any env with numpy/scipy/matplotlib):
+Run (env: featleak-dl):
     python plot_beluga_grid.py --hit-set genome
 """
 

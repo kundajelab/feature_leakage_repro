@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-"""ChromBPNet raw per-bp profiles at chr17 enhancer: exp vs 2^ count inversion.
+"""Predict base-resolution ChromBPNet profiles at a locus with OCT-SOX insertions under exp and 2^ count inversions.
 
-bpnet-lite trains the count head on ln(counts+1) (natural log), so the correct
-total-count inversion is exp(logcounts)-1, not 2**logcounts-1. This regenerates
-the chr17 profiles at TRUE base-pair resolution (no smoothing) under both
-inversions so we can (a) show the y-axis magnitude difference and (b) feed the
-matched-track plots.
+Outputs (outputs/): cbp_raw_<tag>.npz.
 
-Run (env: featleak-dl): python run_cbp_raw.py
+Run (env: featleak-dl):
+    python run_cbp_raw.py
 """
 
 from __future__ import annotations

@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Screen clean strong enhancers for a better Fig 2 ChromBPNet example.
+"""Plot ChromBPNet fibroblast DNase profiles at the top-ranked enhancers with 0-4 OCT-SOX insertions.
 
-For the most peak-like fibroblast enhancers (from run.py's ranking), insert 0-4
-OCT-SOX motifs at the centre and plot ChromBPNet's predicted DNase profile,
-lightly smoothed so the enhancer envelope is visible (ChromBPNet is
-base-resolution, hence spiky). A good replacement example = a clean central
-enhancer peak that stays stable across insertions (no OCT-SOX leakage).
+Outputs (outputs/): candidate_insertions.pdf.
 
 Run (env: featleak-dl):
     python run_candidates.py

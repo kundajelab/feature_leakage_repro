@@ -1,13 +1,9 @@
 #!/usr/bin/env python
-"""Rasterize figure PDFs to PNG for quick preview / GitHub thumbnails.
+"""Rasterize figure PDFs to PNGs next to the source files.
 
-Uses PyMuPDF (fitz). Run with any python that has `fitz` installed:
+Run (any env with PyMuPDF):
     python tools/pdf_to_png.py figures/figure3/outputs/*.pdf
     python tools/pdf_to_png.py --dpi 150 figures/figure4/outputs
-
-A directory argument rasterizes every *.pdf inside it. PNGs are written next to
-the source PDF (same basename). This is a convenience/preview tool only; the
-canonical, Illustrator-editable outputs remain the PDFs (+ SVGs).
 """
 from __future__ import annotations
 import argparse

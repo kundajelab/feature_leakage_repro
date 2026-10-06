@@ -1,12 +1,8 @@
 #!/usr/bin/env python
-"""Figure 1C (AlphaGenome, local model): OCT-SOX ablation effect boxplot.
+"""Compute the Figure 1C OCT-SOX ablation effect on fibroblast DNase with the local AlphaGenome model.
 
-Uses the LOCAL AlphaGenome v1 weights. Samples genomic OCT-SOX instances,
-scores the fibroblast DNase signal before and after dinucleotide-shuffling the
-motif, and boxplots the effect. A predominantly negative effect (accessibility
-rises after ablation) is the implausible repression.
-
-Heavy: one AlphaGenome forward pass per locus per condition.
+Outputs (outputs/): fig1_alphagenome_octsox_boxplot.pdf and
+fig1_alphagenome_octsox_{effect,before,after,before_local,after_local}.npy.
 
 Run (env: featleak-alphagenome):
     python run_alphagenome.py --n-loci 100 --seq-len 2048

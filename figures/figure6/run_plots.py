@@ -1,16 +1,11 @@
 #!/usr/bin/env python
-"""Figure 6 (plots): B (optimization progress) and D (per-motif off-target effect).
+"""Plot greedy-design optimization trajectories and per-motif effects (Figure 6B/D).
 
-Reads a greedy-design results pickle (from run_design.py, or the legacy
-precomputed run) and produces:
-  * Panel B: on-target (melanocyte) vs off-target (keratinocyte) score
-    trajectories across optimization steps, mean +/- std over sequences.
-  * Panel D: per-motif average combined score change (Δ on-target + Δ off-target)
-    as a dot + std forest plot; most inserted motifs are repressive.
+Outputs (outputs/): sequence_optimization_scores.pdf, filtered_motif_effects_offtarget.pdf,
+filtered_motif_effects_combined.pdf.
 
-Run (env: featleak-dl, no GPU needed):
-    python run_plots.py                       # uses legacy precomputed results
-    python run_plots.py --results outputs/all_results.pkl   # your own run
+Run (env: featleak-dl):
+    python run_plots.py --results outputs/all_results.pkl
 """
 
 from __future__ import annotations

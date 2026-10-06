@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-"""End-to-end fine-tuning SMOKE TEST (env: alphagenome-ft).
+"""Run two heads-only AlphaGenome fine-tuning steps on a fibroblast DNase bigWig as a smoke test.
 
-Registers a predefined DNase head bound to a real fibroblast DNase bigWig,
-loads the pretrained AlphaGenome backbone (local weights), freezes it, and runs
-2 heads-only training steps over a handful of genomic intervals. Success = the
-forward/loss/backward/optimizer loop runs and prints losses.
-
-Run:
+Run (env: alphagenome-ft):
     CUDA_VISIBLE_DEVICES=0 XLA_PYTHON_CLIENT_MEM_FRACTION=0.5 \
         conda run -n alphagenome-ft python alphagenome_finetune/smoke_test.py
 """

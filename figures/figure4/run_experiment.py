@@ -1,19 +1,8 @@
 #!/usr/bin/env python
-"""Figure 4C + supplement (d,e): single-task vs multi-task spurious sensitivity.
+"""Train single-task and multi-task AP1 CNNs across background proportions and measure the OCT-SOX effect (Figure 4c, supplement d, e).
 
-Trains CNNs to predict AP1 (FOS) ChIP-seq peaks in fibroblast under increasing
-proportions of random background regions, and measures how strongly an OCT4
-(OCT-SOX) motif -- which should be irrelevant to AP1 in fibroblast -- affects the
-AP1 prediction. The multi-task model (jointly predicting OCT4 peaks) is more
-sensitive to OCT-SOX than the single-task model: this is the feature-leakage
-signature of union-of-peaks training.
-
-  * Panel C: split-violin of OCT-SOX effect on AP1 prediction, single vs
-    multi-task, across background proportions {0.0, 0.2, 0.4, 0.6}.
-  * Supp (d,e): AUC bar charts vs background proportion.
-
-Outputs (outputs/): single_vs_multi_split_violin.pdf,
-    single_task_auc_barplot.pdf, multi_task_auc_barplot.pdf, fig4_effects.pkl.
+Outputs (outputs/): single_vs_multi_split_violin.pdf, single_task_auc_barplot.pdf,
+multi_task_auc_barplot.pdf, fig4_effects.pkl and labeled_peaks.bed.
 
 Run (env: featleak-dl):
     python run_experiment.py

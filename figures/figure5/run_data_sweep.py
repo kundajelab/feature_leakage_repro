@@ -1,16 +1,5 @@
 #!/usr/bin/env python
-"""Figure 5 (extra): does multi-task feature leakage depend on training-set size?
-
-Holds the motif library FIXED (same 100 motifs, effects and task assignments)
-and varies the number of training sequences. For each size it trains the
-additive multi-task CNN and measures:
-  * r_leak  = corr(true effect size, leakage effect on INACTIVE tasks)
-  * r_pred  = corr(true effect size, predicted effect on ACTIVE tasks)
-  * mean_leak = mean leakage effect
-
-Hypothesis: with fewer training sequences the model cannot cleanly separate the
-motifs (superposition), so leakage is stronger / more correlated with effect
-size; with more data it learns cleanly and the leakage correlation weakens.
+"""Measure multi-task feature leakage in the simulation as a function of training-set size (Figure 5 extra).
 
 Outputs (outputs/): data_sweep.csv, data_sweep_leakage_vs_size.pdf.
 

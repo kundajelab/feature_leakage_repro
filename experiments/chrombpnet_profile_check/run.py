@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Diagnose ChromBPNet profile computation + find clean strong-enhancer examples.
+"""Rank the strongest fibroblast DNase peaks by ChromBPNet profile shape and plot their predicted profiles.
 
-1. Introspects the raw ChromBPNet outputs (profile logits + log-counts) so we can
-   confirm the profile = softmax(logits) * (exp(logcounts) - 1) is computed right.
-2. Screens the STRONGEST fibroblast DNase peaks (by narrowPeak signalValue),
-   centres each on its midpoint, predicts, and plots a grid of profiles so we can
-   pick loci that look like real enhancer peaks (a clean central enrichment).
+Outputs (outputs/): peak_ranking.csv, strong_peak_profiles.pdf.
 
 Run (env: featleak-dl):
     python run.py --top 36

@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-"""Figure 6 panel c: DeepSHAP attributions for a designed sequence.
+"""Plot DeepSHAP attributions of a designed sequence for the melanocyte and keratinocyte tasks (Figure 6C).
 
-Picks a greedily-designed sequence that contains inserted HNF4A and CTCF motifs,
-runs DeepLIFT/SHAP against the on-target melanocyte task and the off-target
-keratinocyte task, and plots the contribution logos over the inserted-motif
-region. The inserted motifs receive NEGATIVE contributions for the off-target
-keratinocyte prediction -- the design exploits off-target-repressive motifs.
-
-Reads the greedy-design results pickle (default: outputs/all_results.pkl from
-run_design.py, else the legacy precomputed run; overridable with --results).
+Outputs (outputs/): designed_sequence_deepshap.{pdf,png,svg}.
 
 Run (env: featleak-dl):
-    python run_panel_c.py
+    python run_panel_c.py --results outputs/all_results.pkl
 """
 from __future__ import annotations
 

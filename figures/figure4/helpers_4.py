@@ -1,3 +1,5 @@
+"""Helpers for training and evaluating the Figure 4 single-task and multi-task FOS/OCT4 CNNs."""
+
 import numpy as np
 import pandas as pd
 import torch

@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Supp-Fig-2 f/g style marginalization volcano for AlphaGenome.
+"""Compute and plot the OCT-SOX marginalization volcano across all AlphaGenome DNase tracks (Supplementary Figure 2).
 
-Insert 0..K OCT-SOX motifs into N random background sequences; for EVERY
-AlphaGenome DNase track (all cell types), linear-fit the baseline-normalized
-predicted DNase against the number of insertions -> slope per insertion +
-p-value. Volcano: x = slope, y = -log10(p). Green = FDR-significant repressive,
-orange = significant positive, blue = n.s.
+Outputs (outputs/): volcano_alphagenome_raw.npz and volcano_alphagenome[_specificity].csv/.pdf.
 
 Run (env: featleak-alphagenome):
     python run_volcano_alphagenome.py --n-bg 40

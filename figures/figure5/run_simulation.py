@@ -1,27 +1,11 @@
 #!/usr/bin/env python
-"""Figure 5A/B + supplement (a): controlled multi-task simulation of leakage.
+"""Train a multi-task CNN on simulated motif sequences and measure per-motif leakage onto inactive tasks (Figure 5A/B, Supplementary a).
 
-Reproduces the finding that, even in a perfectly balanced synthetic setting, a
-multi-task model leaks a motif's effect onto tasks where the motif is inactive,
-and that the leakage magnitude correlates with the motif's true effect size.
-
-Pipeline (matches multi_task_simulations/analysis.ipynb + helpers.py):
-  1. Build 100 random 10 bp motifs, each with a random effect (U[0.2,2.0]) and a
-     random subset of the 50 tasks in which it is active.
-  2. Generate sequences by implanting 1-5 motifs into random DNA; label = sum of
-     active motif effects.
-  3. Train the additive multi-task CNN (MotifEffectSum).
-  4. For each motif, marginalize its effect on active vs inactive tasks:
-       predicted_effect = mean effect on active tasks
-       leakage_effect   = mean effect on inactive tasks
-  5. Plot: leakage vs true effect size (Panel B, r~-0.60) and
-           predicted vs true effect size (Supplement a, r~0.90).
-
-Outputs (outputs/): leakage_effect_size_correlation.pdf,
-    effect_size_correlation.pdf, simulation_metrics.csv, model_trained.pth.
+Outputs (outputs/): leakage_effect_size_correlation.pdf, effect_size_correlation.pdf,
+simulation_metrics.csv, model_trained.pth, motif_dict_trained.pkl.
 
 Run (env: featleak-dl):
-    python run_simulation.py            # defaults reproduce Fig 5b (n=10000, seed=1)
+    python run_simulation.py --n-samples 10000 --seed 1
 """
 
 from __future__ import annotations

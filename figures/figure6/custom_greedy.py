@@ -1,6 +1,7 @@
-# design.py
-# fixed Jacob's version
-# Contact: Jacob Schreiber <jmschreiber91@gmail.com>
+"""Greedy motif-substitution sequence design that records per-step scores and inserted motif names.
+
+Adapted from the greedy substitution design code of Jacob Schreiber (tangermeme).
+"""
 
 import time
 import numpy

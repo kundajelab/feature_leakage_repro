@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-"""Matched-window profile figures at chr17, two rendering versions.
+"""Plot ChromBPNet and AlphaGenome OCT-SOX insertion profiles at the chr17 example locus in two smoothing versions.
 
-Uses the CORRECTED ChromBPNet count inversion exp(logcounts)-1 (natural log;
-see run_cbp_raw.py) and the skin-biceps AlphaGenome track.
+Outputs (outputs/): tracks_matched_both_smoothed.{pdf,png} and tracks_matched_cbp_bp.{pdf,png}.
 
-  version "both_smoothed": AlphaGenome AND ChromBPNet both Gaussian-smoothed
-                           (clean accessibility envelopes).
-  version "cbp_bp":        ChromBPNet at true base-pair resolution (raw Tn5
-                           counts/bp), AlphaGenome smoothed for readability.
-
-Run (any env): python run_profile_versions.py
+Run (env: featleak-dl):
+    python run_profile_versions.py
 """
 
 from __future__ import annotations

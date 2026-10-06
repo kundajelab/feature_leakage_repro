@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""Re-plot data_sweep_leakage_vs_size.pdf from cached data_sweep.csv.
+"""Re-plot the training-set-size sweep figure from the cached data_sweep.csv.
 
-Faithful copy of the plotting block in run_data_sweep.main(), driven from the
-saved CSV so we get an Illustrator-editable figure without re-training the sweep.
+Outputs (outputs/): data_sweep_leakage_vs_size.pdf.
 
-Run: python tools/render_with_svg.py figures/figure5/replot_data_sweep.py
+Run (env: featleak-dl):
+    python tools/render_with_svg.py figures/figure5/replot_data_sweep.py
 """
 
 from __future__ import annotations

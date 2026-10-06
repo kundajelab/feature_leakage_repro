@@ -1,3 +1,5 @@
+"""Synthetic motif simulation, multi-task CNN training and leakage measurement helpers."""
+
 from tangermeme.utils import one_hot_encode, random_one_hot, characters
 from tangermeme.ersatz import substitute, dinucleotide_shuffle
 from tangermeme.predict import predict

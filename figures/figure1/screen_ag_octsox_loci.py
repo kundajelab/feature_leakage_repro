@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Screen OCT-SOX loci for a Figure 1A AlphaGenome example at full input context.
+"""Screen OCT-SOX loci by AlphaGenome ablation effect to pick a Figure 1A example.
 
-OCT-SOX FIMO hits 200-500 bp from a cardiac-fibroblast DNase summit (as in the
-Fig 1C analysis) are scored with the local AlphaGenome model at --context bp:
-the motif span is shuffled (--n-shuffles permutations) and the fibroblast DNase
-signal summed over the central 2 kb is compared, log2(ablated / original).
-Positive values = accessibility rises when the motif is removed (repressive).
+Outputs (outputs/panel_a/): ag_octsox_screen_ctx<context>.tsv.
 
 Run (env: featleak-alphagenome):
     python screen_ag_octsox_loci.py --n-loci 150 --context 524288

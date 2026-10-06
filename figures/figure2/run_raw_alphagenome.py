@@ -1,16 +1,11 @@
 #!/usr/bin/env python
-"""Figure 2b: raw OCT-SOX insertion effect in AlphaGenome (no shuffle subtraction).
+"""Compute the raw OCT-SOX insertion effect in AlphaGenome (PyTorch port) on the Figure 2 enhancers (Figure 2b).
 
-For each of the 120 dermal-fibroblast enhancers, write four OCT-SOX copies at +/-150 and
-+/-200 bp and record log2[(S_inserted + 1e-3) / (S_original + 1e-3)], where S is the
-predicted DNase signal of the dermal-fibroblast track (CL:0002551, ENCSR000EPO; channel 60)
-summed over the central 1,024 bp. The old central-300 bp readout is saved alongside.
+Outputs (outputs/): raw_insertion_alphagenome.csv.
 
-Uses the PyTorch port of the all-folds AlphaGenome v1 weights at the full 524,288 bp input.
-Run (env: featleak-agtorch, which has alphagenome-pytorch):
-    CUDA_VISIBLE_DEVICES=0 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \
+Run (env: featleak-agtorch):
+    CUDA_VISIBLE_DEVICES=0 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True \\
         python run_raw_alphagenome.py
-Writes outputs/raw_insertion_alphagenome.csv.
 """
 from __future__ import annotations
 

@@ -1,18 +1,9 @@
 #!/usr/bin/env python
-"""Figure 2 (panel b + supplement): ChromBPNet OCT-SOX marginalization on real peaks.
+"""Compute the ChromBPNet OCT-SOX insertion effect (real vs shuffled motif) on fibroblast peaks (Figure 2).
 
-Insert the OCT-SOX consensus into the flanks of the top-N fibroblast DNase peaks and
-record the log2 fold-change of predicted central accessibility (native vs +OCT-SOX),
-AND the same for composition-matched SHUFFLED OCT-SOX. The reported effect is the
-shuffle-corrected SPECIFICITY = log2FC(real) - log2FC(shuffled) -- still in log2FC
-units, but with the generic-insertion-disruption baseline subtracted (essential for
-base-resolution ChromBPNet, whose raw log2FC is dominated by generic disruption).
+Outputs (outputs/): cbp_octsox_specificity_<tag>.csv.
 
-Use the EXPERIMENT-MATCHED ChromBPNet for the model being compared:
-  --chrombpnet-key chrombpnet_skinbiceps   (ENCSR562ACY)  -> matches AlphaGenome (panel b)
-  --chrombpnet-key chrombpnet_dermis       (ENCSR000EPO)  -> matches Enformer/Borzoi (supplement)
-
-Writes outputs/cbp_octsox_specificity_<tag>.csv. Run (env: featleak-dl):
+Run (env: featleak-dl):
     python run_marg_chrombpnet.py --chrombpnet-key chrombpnet_skinbiceps --tag skinbiceps --n-loci 120
     python run_marg_chrombpnet.py --chrombpnet-key chrombpnet_dermis     --tag dermis     --n-loci 120
 """

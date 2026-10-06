@@ -1,18 +1,5 @@
 #!/usr/bin/env python
-"""Figure 6 (design step): greedy motif insertion with Beluga.
-
-Designs sequences that maximise the DIFFERENTIAL accessibility between an
-on-target cell type (melanocyte) and an off-target cell type (keratinocyte),
-using greedy insertion of Vierstra archetype motifs. The point of the figure is
-that the design is driven largely by motifs that *repress* the off-target cell
-type -- a symptom of feature leakage.
-
-Direction note: the original notebooks were internally inconsistent about which
-cell type was on/off target. This script fixes the convention to match the
-Figure 6 caption: on-target = melanocyte (score should go UP), off-target =
-keratinocyte (score should go DOWN). ``score_target_1`` is the on-target
-(melanocyte) trajectory and ``score_target_2`` the off-target (keratinocyte)
-trajectory, matching the plotting script.
+"""Greedy motif-insertion design of melanocyte-specific sequences with Beluga (Figure 6).
 
 Outputs (outputs/): all_results.pkl (list of per-sequence greedy trajectories,
 consumed by run_plots.py) and edited_seqs.pkl (final designed sequences).

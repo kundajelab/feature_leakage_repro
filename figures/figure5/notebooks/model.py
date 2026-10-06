@@ -1,4 +1,8 @@
-# Taken from https://github.com/kipoi/models/blob/master/DeepSEA/beluga/model.py
+"""PyTorch DeepSEA/Beluga model, synthetic motif datasets and the activation probe.
+
+The Beluga architecture is adapted from the Kipoi model
+https://github.com/kipoi/models/blob/master/DeepSEA/beluga/model.py
+"""
 
 import torch
 from torch import nn

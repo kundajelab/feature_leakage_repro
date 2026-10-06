@@ -1,16 +1,10 @@
 #!/usr/bin/env python
-"""Publication panel: feature leakage in TF ChIP-seq (AlphaGenome, K562).
+"""Plot the cross-TF repressive ChIP leakage panel (real vs shuffled log2FC and ISM logos) for AlphaGenome in K562.
 
-(a) Motif-specific repression of the WRONG TF: for each cross-family pair A->B,
-    the change in B's predicted ChIP when the REAL A motif is inserted (red) vs a
-    composition-matched SHUFFLED A motif (grey). Real specifically represses;
-    shuffle does not.
-(b) Superposition, by ISM: the SAME A-motif bases ACTIVATE A's own ChIP (top) but
-    REPRESS the off-target TF B's ChIP (bottom) -- shown for NRF1->REST and
-    YY1->REST.
+Outputs (outputs/): chip_leakage_panel.{pdf,png}.
 
-Reads repressive_validated_K562.csv and repressive_ism_{A}_{B}.npz.
-Run: python tools/render_with_svg.py experiments/tf_chip_leakage/run_chip_leakage_panel.py
+Run (env: featleak-dl):
+    python tools/render_with_svg.py experiments/tf_chip_leakage/run_chip_leakage_panel.py
 """
 
 from __future__ import annotations

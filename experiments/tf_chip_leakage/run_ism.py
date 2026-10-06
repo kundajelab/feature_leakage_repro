@@ -1,18 +1,7 @@
 #!/usr/bin/env python
-"""ISM proof that TF-motif ChIP leakage in AlphaGenome is REAL (motif-specific).
+"""Compute ISM of a measured TF's AlphaGenome ChIP-seq prediction over an inserted motif for selected TF pairs.
 
-For a (inserted motif TF, measured ChIP TF) pair, insert the inserted TF's motif
-into many random synthetic sequences, then compute in-silico saturation
-mutagenesis of the MEASURED TF's ChIP-seq output over the motif window, and
-average the per-position contribution across sequences.
-
-If the measured TF's ChIP prediction attributes to the *distinct* inserted
-motif (a sequence it should not care about), the leakage is genuine and
-motif-specific -- not a generic response to "some insertion". Each pair is
-chosen so the inserted motif is a DIFFERENT motif family from the measured TF.
-
-An on-target control (measured TF's own motif -> measured TF) validates that the
-ISM recovers the correct motif.
+Outputs (outputs/): ism_<inserted>_to_<measured>.npy, ism_leakage_examples_<cell>.pdf.
 
 Run (env: featleak-alphagenome):
     python run_ism.py --n-seqs 10

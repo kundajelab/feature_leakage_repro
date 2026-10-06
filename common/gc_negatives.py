@@ -1,13 +1,4 @@
-"""GC-matched random negative regions sampled from a genome FASTA.
-
-A self-contained fallback for when curated GC-matched negative BED files are not
-available on a given machine. It samples random fixed-width windows genome-wide,
-drops windows containing Ns or overlapping (within a flank of) the supplied
-peaks, and resamples the remainder to match the peaks' GC-content distribution.
-
-This lets peak-vs-background experiments run without depending on an external,
-possibly permission-restricted, precomputed negatives directory.
-"""
+"""GC-matched random negative regions sampled from a genome FASTA."""
 
 from __future__ import annotations
 

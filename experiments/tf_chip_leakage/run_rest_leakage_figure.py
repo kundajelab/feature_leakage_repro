@@ -1,17 +1,7 @@
 #!/usr/bin/env python
-"""REST-centric ChIP-seq feature-leakage figure (AlphaGenome, K562).
+"""Compute and plot AlphaGenome REST ChIP log2FC, ISM and profiles after motif insertion in K562 (Supplementary Fig. 2e-g).
 
-Context: random background + REST's own motif at centre (creates REST ChIP
-signal); query motifs inserted in the flanks (+/-120, 2 copies).
-
-(a) log2FC of REST's predicted ChIP when a query motif is inserted: REAL motif
-    (red) vs composition-matched SHUFFLE (grey). Unrelated motifs specifically
-    repress REST; the shuffle does not.
-(b) ISM -> REST ChIP: REST's OWN motif ACTIVATES REST (top, positive control),
-    while NRF1 / YY1 / E-box / CTCF motifs REPRESS REST (leakage). Same readout,
-    opposite sign for the wrong motifs.
-(c) REST ChIP profile for NRF1 and YY1: REST peak collapses under the real motif
-    but not the shuffle.
+Outputs (outputs/): rest_leakage_logfc.csv, rest_leakage_ism.npz, chip_leakage_panel_rest.{pdf,png}.
 
 Run (env: featleak-alphagenome):
     python run_rest_leakage_figure.py --n-bg 12 --n-ism 8

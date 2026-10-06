@@ -1,3 +1,5 @@
+"""Motif marginalization and ablation helpers for the Figure 1 Enformer notebooks."""
+
 import os
 import numpy as np
 from alphagenome.data import gene_annotation

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-"""Re-plot all OCT-SOX volcanoes from cached CSVs with clearer axis labels."""
+"""Re-plot the OCT-SOX volcanoes from the cached volcano CSVs.
+
+Outputs (outputs/): volcano_<model>.pdf and volcano_<model>_specificity.pdf.
+
+Run (env: featleak-dl):
+    python run_volcano_replot.py
+"""
 from __future__ import annotations
 
 import sys

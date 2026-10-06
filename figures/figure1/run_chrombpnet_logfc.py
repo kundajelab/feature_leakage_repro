@@ -1,18 +1,7 @@
 #!/usr/bin/env python
-"""ChromBPNet OCT-SOX ablation effect as per-locus log2 fold-change.
+"""Compute the Figure 1C per-site OCT-SOX ablation log2 fold-change with ChromBPNet and write the shared site list.
 
-Fig-1-style ablation, matched to run_alphagenome.py: take OCT-SOX FIMO hits
-200-500 bp from a fibroblast DNase peak summit, extract the ChromBPNet input
-window centred on the motif, dinucleotide-shuffle the central 14 bp, and compare
-predicted accessibility with vs. without the motif. ChromBPNet's count head is
-trained on ln(counts+1), so a clean per-locus log2 fold-change is
-
-    log2FC = ( logcounts(with motif) - logcounts(ablated) ) / ln(2)
-
-over the model's 1000 bp output (which is itself a local window, centred on the
-motif). Negative = motif represses predicted accessibility (leakage direction);
-single-task ChromBPNet should be ~0. Saves the per-locus array and prints a
-one-sided Wilcoxon test.
+Outputs (outputs/): fig1_octsox_sites<tag>.csv and fig1_chrombpnet_octsox_logfc<tag>.npy.
 
 Run (env: featleak-dl):
     python run_chrombpnet_logfc.py --num-loci 1000

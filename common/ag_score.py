@@ -1,8 +1,4 @@
-"""Scalar DNase scoring with the *local* AlphaGenome v1 model.
-
-Kept separate from common/models.py because it imports the AlphaGenome (JAX)
-stack, which only exists in the ``featleak-alphagenome`` env.
-"""
+"""Scalar DNase scoring of sequences with the local AlphaGenome v1 (JAX) model."""
 
 from __future__ import annotations
 

@@ -1,3 +1,5 @@
+"""Keras helpers for training the Figure 4 panel b FOS/OCT4 CNNs."""
+
 import numpy as np
 import pandas as pd
 import sys

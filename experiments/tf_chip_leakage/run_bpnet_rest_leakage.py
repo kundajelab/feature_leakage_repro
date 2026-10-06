@@ -1,18 +1,9 @@
 #!/usr/bin/env python
-"""Do single-task REST BPNet models show the REST ChIP-seq leakage seen in AlphaGenome?
+"""Compute REST ChIP log2FC after real vs shuffled motif insertion with the ENCODE REST BPNet models (Supplementary Fig. 2e).
 
-Same design as run_rest_leakage_figure.py (AlphaGenome, K562 REST ChIP):
-  * random backgrounds with REST's own motif at the centre (creates REST signal)
-  * a query motif written twice in the flanks (+/-120 bp)
-  * readout = predicted REST ChIP counts in the central 600 bp
-  * effect = log2FC(real motif) vs log2FC(3 shuffled copies of the motif)
+Outputs (outputs/bpnet_rest/): bpnet_rest_leakage.csv.
 
-Models: the ENCODE BPNet models trained on each K562 REST ChIP-seq experiment
-(annotations ENCSR364RHG / ENCSR759WXZ / ENCSR831SVZ / ENCSR867KCV), TensorFlow
-SavedModels, predictions averaged over the 5 folds; control-track inputs set to 0
-(as allowed by the ENCODE README). Input 2,114 bp, output 1,000 bp x 2 strands.
-
-Run (env: featleak-tf; TF 2.15 and 2.8 give identical predictions):
+Run (env: featleak-tf):
     python run_bpnet_rest_leakage.py --n-bg 256
 """
 

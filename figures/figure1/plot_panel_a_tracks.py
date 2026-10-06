@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-"""Figure 1A: observed / predicted fibroblast DNase + OCT-SOX ISM logo per model.
+"""Plot Figure 1A: observed and predicted fibroblast DNase tracks with the OCT-SOX ISM logo per model.
 
-All three models are drawn on the SAME genomic window width (--window bp, centred
-on the OCT-SOX motif) with an identical scale bar. The highlighted band on the
-tracks is drawn in genomic coordinates and is exactly the ISM_BP window shown in
-the logo underneath (connected by zoom lines), so it is to scale.
+Outputs (outputs/panel_a/plots/): fig1_a_<model>_<window>bp.pdf/.png.
 
-Run (env: featleak-dl, needs pyBigWig + logomaker):
-    python plot_panel_a_tracks.py --window 16384
+Run (env: featleak-dl):
+    python plot_panel_a_tracks.py --models alphagenome_dermis,borzoi,enformer \
+        --ag-ism panel_a_alphagenome_dermis_ctx2048.npz
 """
 
 from __future__ import annotations

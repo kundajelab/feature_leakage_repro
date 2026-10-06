@@ -1,20 +1,13 @@
 #!/usr/bin/env python
-"""Figure 1A: observed / predicted fibroblast DNase + OCT-SOX ISM logo, per model.
+"""Compute Figure 1A predicted fibroblast DNase and OCT-SOX ISM at the example locus for one model.
 
-For each model the example OCT-SOX locus is fixed (the FIMO hit shown in the
-manuscript). The script saves, on a common bp coordinate system:
+Outputs (outputs/panel_a/): panel_a_<model>[_ctx<context>].npz.
 
-    pred   predicted fibroblast DNase, bins expanded to 1 bp
-    ism    (ISM_BP, 4) log2 fold-change of the central-2 kb predicted DNase for
-           every single-base substitution in the ISM_BP window centred on the motif
-
-The observed ENCODE bigWig and the plotting (common window width, to-scale
-highlight) are handled by plot_panel_a_tracks.py.
-
-Run:
-    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model borzoi      # featleak-dl
-    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model enformer    # featleak-dl
-    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model alphagenome # featleak-alphagenome
+Run (env: featleak-dl for borzoi/enformer, featleak-agtorch for alphagenome_dermis):
+    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model borzoi
+    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model enformer
+    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model alphagenome_dermis
+    CUDA_VISIBLE_DEVICES=0 python run_panel_a_tracks.py --model alphagenome_dermis --context 2048
 """
 
 from __future__ import annotations

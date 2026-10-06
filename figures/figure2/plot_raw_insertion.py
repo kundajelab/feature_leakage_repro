@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-"""Figure 2b + Supp 2a (raw OCT-SOX insertion effect, matched ~1 kb readout) and supplements.
+"""Plot the raw OCT-SOX insertion effect across models (Figure 2b, Supp 2a).
 
-Reads the CSVs from run_raw_alphagenome.py, run_raw_grelu.py (enformer, borzoi) and
-run_raw_chrombpnet.py, and writes to outputs/:
-  panelb_raw_insertion.pdf          Fig 2b: AlphaGenome vs ChromBPNet (fold 0)
-  supplement_raw_insertion.pdf      Supp 2a: Enformer, Borzoi vs ChromBPNet (fold 0)
-  supplement_real_vs_shuffles.pdf   ChromBPNet: real OCT-SOX vs shuffled insertions
-  raw_insertion_summary.csv         medians, two-sided Wilcoxon P, paired tests vs ChromBPNet
-Tests: two-sided Wilcoxon signed-rank vs zero (n = 120); paired two-sided Wilcoxon vs ChromBPNet.
+Outputs (outputs/): panelb_raw_insertion.pdf, supplement_raw_insertion.pdf,
+supplement_real_vs_shuffles.pdf and raw_insertion_summary.csv.
 
-Run (env: featleak-dl, no GPU):  python plot_raw_insertion.py
+Run (env: featleak-dl):
+    python plot_raw_insertion.py
 """
 from __future__ import annotations
 

@@ -1,21 +1,8 @@
 #!/usr/bin/env python
-"""Find REPRESSIVE cross-TF feature leakage in AlphaGenome (K562 TF ChIP-seq).
+"""Scan cross-family TF motif pairs for repression of AlphaGenome ChIP-seq predictions and test the top pairs against shuffled motifs.
 
-Positive cross-TF effects (motif A raises TF B's predicted ChIP) can be genuine
-cooperativity / co-binding, so they're weak evidence of leakage. A motif A that
-REPRESSES a *different-family* TF B's binding has no co-binding explanation, so
-it's a cleaner superposition/leakage signature.
-
-Repression needs a baseline to repress (on random DNA B's signal is ~0), so:
-  1. base = random background + B's OWN motif at centre  -> creates B ChIP signal
-  2. insert cross-family motif A in the FLANK (mid +/-120)
-  3. measure the change in B's central ChIP signal.
-A composition-matched SHUFFLE of A is the control: real repression that the
-shuffle does NOT reproduce = motif-specific leakage, not a generic-insertion
-artifact. We also require A to ACTIVATE its own TF (on-target sanity check).
-
-Stage 1 scans all cross-family (A,B) pairs (real only) to rank repressors;
-stage 2 adds the shuffle control + Wilcoxon for the top pairs.
+Outputs (outputs/): repressive_scan_<cell>.csv, repressive_draws_<cell>.npz,
+repressive_validated_<cell>.csv, repressive_profiles_<cell>.pdf.
 
 Run (env: featleak-alphagenome):
     python run_repressive.py --n-bg 12 --top 8

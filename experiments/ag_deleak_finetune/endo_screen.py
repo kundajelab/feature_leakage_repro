@@ -1,18 +1,11 @@
 #!/usr/bin/env python
-"""Figure 7c: screen endogenous OCT-SOX sites on held-out chr8/9, before vs after fine-tuning.
+"""Screen endogenous OCT-SOX sites on chr8/chr9 by motif shuffling, before vs after fine-tuning (Figure 7c).
 
-Sites are the Figure 1 FIMO OCT-SOX hits (AC0636) within 500 bp of a dermal-fibroblast
-DNase summit (ENCFF184KAM) on chr8/chr9, the chromosomes held out from fine-tuning. Each
-site is centred in the 524,288 bp window and its 14 bp are dinucleotide-shuffled
-(Fig 1's ablation) NSHUF times. Readout A = predicted dermis DNase (CL:0002551) summed
-over +-500 bp around the motif (as in Fig 1c), and over the central 300 bp; both heads
-(original, fine-tuned) are read from the same trunk embedding.
+Outputs (outputs/dermis_torch/endo_screen/): screen_<shard>.csv per shard, merged into screen.csv.
 
-    effect = log2(A_intact / mean_k A_shuffled_k)    (negative = motif lowers prediction)
-
-Run (env featleak-agtorch, one GPU per shard), then merge:
-    python endo_screen.py --shard 0 --nshard 3     # x3, in parallel
-    python endo_screen.py --merge                   # -> endo_screen/screen.csv
+Run (env: featleak-agtorch, one GPU per shard):
+    python endo_screen.py --shard 0 --nshard 3     # shards 0-2 in parallel
+    python endo_screen.py --merge
 """
 
 from __future__ import annotations

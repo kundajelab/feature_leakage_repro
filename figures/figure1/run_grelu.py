@@ -1,17 +1,11 @@
 #!/usr/bin/env python
-"""Figure 1C (Borzoi / Enformer via gReLU): OCT-SOX ablation effect boxplot.
+"""Compute the Figure 1C OCT-SOX ablation effect on fibroblast DNase with Borzoi or Enformer (gReLU).
 
-Reproduces the original borzoi_v2 / enformer_v2 ablation exactly:
-  * OCT-SOX FIMO hits within 200-500 bp of a fibroblast DNase peak summit.
-  * Extract each model's input window centred on the motif; dinucleotide-shuffle
-    the central 14 bp (the OCT-SOX motif).
-  * effect = sum over ALL bins of (signal_with_motif - signal_ablated) for the
-    fibroblast DNase task (ENCODE track ENCFF302JEV).
-  * A predominantly NEGATIVE effect => the motif is predicted to REPRESS
-    accessibility (the implausible result). Wilcoxon tests effect < 0.
+Outputs (outputs/): fig1_<model>_octsox_boxplot.pdf and
+fig1_<model>_octsox_{effect,before,after,before_local,after_local}.npy.
 
 Run (env: featleak-dl):
-    python run_grelu.py --model borzoi --n-loci 200     # or --model enformer
+    python run_grelu.py --model borzoi --n-loci 200
 """
 
 from __future__ import annotations

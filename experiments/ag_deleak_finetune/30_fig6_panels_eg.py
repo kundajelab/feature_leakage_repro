@@ -1,17 +1,11 @@
 #!/usr/bin/env python
-"""Figure 6 panels e and g (AlphaGenome fine-tuning; pre-FT vs objective C).
+"""Compute and plot the OCT-SOX insertion log2FC boxplot and ISM logos for the JAX fine-tuned DNase head.
 
-Panel e: distribution of single-OCT-SOX-insertion log2FC of predicted skin-biceps
-         DNase over the held-out chr8/9 enhancers, AlphaGenome (pre-FT, red) vs
-         AlphaGenome Fine-tune (objective C, purple).
-Panel g: in-silico-mutagenesis contribution logo over the endogenous OCT-SOX motif
-         at chr8:40,414,037 (held-out), AlphaGenome (top) vs AlphaGenome Fine-tune
-         (objective C, bottom). After fine-tuning the motif is no longer highlighted.
-
-(Panel f, the PearsonR fidelity barplot, is produced by 27_fidelity_bar_prec.py.)
+Outputs (outputs/): fig6_panel_e_data.npz, fig6_panel_e_octsox_box.{pdf,svg,png},
+fig6_panel_g_ism.{pdf,svg,png}.
 
 Run (env: alphagenome-ft):
-    ... python -u 30_fig6_panels_eg.py
+    python 30_fig6_panels_eg.py
 """
 from __future__ import annotations
 import pickle, sys

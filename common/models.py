@@ -1,9 +1,4 @@
-"""Model loaders shared across figures.
-
-Thin, config-driven wrappers so no figure script hard-codes a weight path or a
-CUDA device. Import the heavy ML frameworks lazily inside each function so that
-``common.config`` / ``common.motifs`` stay importable from any environment.
-"""
+"""Config-driven loaders for the models used across figures."""
 
 from __future__ import annotations
 

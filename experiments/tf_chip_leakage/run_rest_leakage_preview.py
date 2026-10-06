@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-"""REST-centric ChIP-leakage figure, panels a+b, from CACHED results (no AG).
+"""Plot REST ChIP leakage panels a and b from cached repressive-leakage results.
 
-Preview built while AlphaGenome is unavailable (OAK permission issue). Panel (a)
-log2FC is approximated from the cached mean ChIP changes and the REST baseline
-(~5139); panel (b) uses the cached ISM contribution arrays. The profiles (panel
-c) and CTCF's ISM require re-running run_rest_leakage_figure.py once AG loads.
+Outputs (outputs/): chip_leakage_panel_rest.{pdf,png}.
 
-Run: python tools/render_with_svg.py experiments/tf_chip_leakage/run_rest_leakage_preview.py
+Run (env: featleak-dl):
+    python tools/render_with_svg.py experiments/tf_chip_leakage/run_rest_leakage_preview.py
 """
 
 from __future__ import annotations

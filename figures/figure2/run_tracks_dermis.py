@@ -1,17 +1,11 @@
 #!/usr/bin/env python
-"""Figure 2 C/D (dermis-matched): predicted DNase at one enhancer with 0-4 OCT-SOX insertions.
+"""Predict dermis DNase profiles at one enhancer with 0-4 OCT-SOX insertions for ChromBPNet or AlphaGenome (Figure 2c/d).
 
-Both models read the same ENCODE experiment, ENCSR000EPO (fibroblast of dermis):
-  --model chrombpnet   `chrombpnet_dermis`, base-resolution expected counts (env featleak-dl)
-  --model alphagenome  CL:0002551 DNase track, full 524,288 bp input, PyTorch port (env featleak-agtorch)
+Outputs (outputs/): <model>_track_data_<tag>.npz (read by run_tracks_matched.py).
 
-OCT-SOX is written at the flank offsets in cbpnet_helpers.TRACK_INSERT_OFFSETS
-(1, 2, 3, then 4 insertions). Writes outputs/<model>_track_data_<tag>.npz in the
-format read by run_tracks_matched.py:
-
+Run (env: featleak-dl for chrombpnet, featleak-agtorch for alphagenome):
     python run_tracks_dermis.py --model chrombpnet  --locus chr6:162964880:162965140
     python run_tracks_dermis.py --model alphagenome --locus chr6:162964880:162965140
-    python run_tracks_matched.py --cbp-tag dermis --ag-tag dermis --suffix _dermis
 """
 
 from __future__ import annotations

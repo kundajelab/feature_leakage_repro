@@ -1,20 +1,11 @@
 #!/usr/bin/env python
-"""Figure 1 E-H logos: labelled DeepLIFT examples of positive / negative motif hits.
+"""Select and render example DeepLIFT logos of OCT-SOX, AP-1, HNF4 and CTCF hits in Beluga DNase tasks (Figure 1 E-H).
 
-For each (motif, Beluga DNase task, expected sign) pair, strongest-quartile FIMO
-hits are screened with span-summed DeepLIFT (fast exact implementation from
-run_beluga_grid.py). The top candidates are re-attributed at base resolution
-(tangermeme DeepLIFT/SHAP, 20 dinucleotide-shuffled references, single task) and
-ranked by how cleanly the motif dominates the local attribution:
-
-    cleanliness = |attribution in motif span| / sum |attribution| in +/-40 bp
-
-Stage 1 (--stage screen) writes candidate attributions and a contact sheet PNG
-per pair for visual inspection. Stage 2 (--stage final --pick PAIR=RANK ...)
-renders the chosen examples as editable PDFs labelled with locus + cell type.
+Outputs (outputs/example_logos/): candidate tables, attributions and contact
+sheets (candidates_*.tsv, attr_*.npz, contact_*.png, paired_*.tsv/.npz,
+contact_paired_*.png) and final logos fig1_logo_*.pdf/.png.
 
 Run (env: featleak-dl):
-    python run_example_logos.py --stage screen --device cuda:0
     python run_example_logos.py --stage paired --n-cand 60 --device cuda:0
     python run_example_logos.py --stage final_paired --pick OCT-SOX=chr15:70407064 \
         AP-1=chr1:145974199 HNF4=chr5:169108419 CTCF=chr1:174983404

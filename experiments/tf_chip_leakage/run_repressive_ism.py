@@ -1,18 +1,7 @@
 #!/usr/bin/env python
-"""ISM of the repressive-leakage motifs, averaged over marginalization backgrounds.
+"""Compute ISM over the inserted motif for both the inserted TF's and the repressed TF's AlphaGenome ChIP-seq prediction.
 
-For each repressive pair (A represses B): build synthetic sequences = random
-background + B's own motif at centre + A's motif in the flank (mid+120), then
-saturation-mutate the A-motif window and read out, from the SAME prediction,
-BOTH the inserted TF A's ChIP signal and the target TF B's ChIP signal. Averaged
-over many backgrounds this gives two contribution logos over the A motif:
-
-  * A -> A  (positive control): mutating A's bases lowers A's own ChIP -> a
-    coherent POSITIVE A-motif logo (the model reads the motif correctly).
-  * A -> B  (leakage): if the repression is motif-specific, mutating the SAME A
-    bases RAISES B's ChIP -> a coherent NEGATIVE A-motif logo.
-
-Same bases, opposite sign across the two tasks = representation superposition.
+Outputs (outputs/): repressive_ism_<A>_<B>.npz, repressive_ism_<cell>.pdf.
 
 Run (env: featleak-alphagenome):
     python run_repressive_ism.py --n-bg 10

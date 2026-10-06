@@ -1,13 +1,8 @@
 #!/usr/bin/env python
-"""Does a TF's motif leak into the WRONG TF ChIP-seq task in AlphaGenome?
+"""Compute AlphaGenome's TF ChIP-seq response to each inserted TF motif across all TF tracks in one cell type.
 
-Marginalization test in one cell type (default K562): insert a known TF's motif
-into random background sequences and measure the change in AlphaGenome's
-predicted TF ChIP-seq signal for EVERY TF track in that cell type. The motif's
-own TF should respond (the diagonal); any off-target TF that responds -- despite
-not binding that motif -- is feature leakage.
-
-Builds a (inserted motif TF) x (measured ChIP TF) effect matrix and heatmaps.
+Outputs (outputs/): leakage_matrix_<cell>.csv, leakage_matrix_<cell>.pdf,
+leakage_matrix_<cell>_normalized.pdf, leakage_report_<cell>.txt.
 
 Run (env: featleak-alphagenome):
     python run.py --n-backgrounds 24 --cell-type K562

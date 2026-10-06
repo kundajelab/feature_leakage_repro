@@ -1,13 +1,11 @@
 #!/usr/bin/env python
-"""Figure 4 supplement (d, e): held-out AUC for AP1 peak classification vs the
-proportion of random background regions in training, single-task vs multi-task.
+"""Plot held-out AP1 AUC vs background proportion for single-task and multi-task models (Figure 4 supplement d, e).
 
-By default this plots the AUCs of the manuscript run (the run behind the other
-Figure 4 panels). Pass --from-pkl to instead plot a fresh run_experiment.py
-result (outputs/fig4_effects.pkl).
+Outputs (outputs/): supp_d_single_task_auc[_rerun].{pdf,png} and supp_e_multi_task_auc[_rerun].{pdf,png}.
 
-Run (any env with matplotlib):
+Run (env: featleak-dl):
     python plot_auc_bars.py
+    python plot_auc_bars.py --from-pkl
 """
 
 from __future__ import annotations

@@ -1,3 +1,12 @@
+"""Greedy motif-insertion design of random sequences with Beluga for a pair of up/down tasks.
+
+Outputs (--output_dir): motif_list_<id>.pkl, rand_filt_<id>.pkl, and per sequence
+results_<id>_<i>.pkl, edited_seq_<id>_<i>.pkl, added_motifs_<id>_<i>.pkl.
+
+Run (env: featleak-dl):
+    python sequence_design.py --output_dir out --sequence_id 0 --task_id_up <idx> --task_id_down <idx>
+"""
+
 import os
 import sys
 #sys.path.insert(0,'/users/kobbad/feat_leakage/deepSEA_negatives')

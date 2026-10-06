@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-"""Figure 2b / Supp 2a reference: raw OCT-SOX insertion effect in ChromBPNet.
+"""Compute the raw OCT-SOX (and shuffled-motif) insertion effect in ChromBPNet on the Figure 2 enhancers (Figure 2b, Supp 2a).
 
-Same 120 enhancers and insertions as run_raw_alphagenome.py, scored with the ChromBPNet model
-trained on ENCSR000EPO (bias-corrected, fold 0 = `chrombpnet_dermis`, the model used in Fig 2b
-and Fig 7). Effect = (count_head(inserted) - count_head(original)) / ln 2
-= log2[(counts_inserted + 1) / (counts_original + 1)] over the 1,000 bp output.
-
-With --n-shuffles K (default 50) it also scores K mononucleotide shuffles of OCT-SOX (seed 2026)
-plus the 3 shuffles of the original Fig 2b control, for the shuffle-comparison supplement.
+Outputs (outputs/): raw_insertion_chrombpnet.csv.
 
 Run (env: featleak-dl):
-    CUDA_VISIBLE_DEVICES=0 python run_raw_chrombpnet.py
-Writes outputs/raw_insertion_chrombpnet.csv (long format: motif, locus, lfc_total, lfc_central).
+    CUDA_VISIBLE_DEVICES=0 python run_raw_chrombpnet.py --n-shuffles 50
 """
 from __future__ import annotations
 

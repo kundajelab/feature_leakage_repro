@@ -1,15 +1,7 @@
 #!/usr/bin/env python
-"""On-target control: do the SAME ChIP tasks correctly predict their target TF?
+"""Plot AlphaGenome ChIP-seq profiles for selected TFs with no motif, their own motif, and an off-target motif inserted.
 
-For each measured TF used in the leakage plots (MAX, JUND, SPI1, YY1), this:
-  1. prints/saves EXACTLY which AlphaGenome CHIP_TF tracks are averaged for it
-     (name + assay + TF + biosample) so the task identity is verifiable, and
-  2. marginalizes its predicted ChIP profile over N random backgrounds for three
-     conditions -- background (before), its OWN motif inserted (on-target), and
-     the leaking motif inserted (off-target) -- and plots all three per TF.
-
-If the on-target (own-motif) curve peaks strongly, the task genuinely predicts
-its target TF; the off-target curve peaking too is the leakage.
+Outputs (outputs/): tracks_used_<cell>.txt, ontarget_vs_leakage_profiles_<cell>.pdf.
 
 Run (env: featleak-alphagenome):
     python run_ontarget.py --n-backgrounds 16 --cell-type K562

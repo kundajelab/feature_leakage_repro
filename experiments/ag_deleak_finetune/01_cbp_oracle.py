@@ -1,19 +1,10 @@
 #!/usr/bin/env python
-"""Oracle step: ChromBPNet OCT-SOX effect per enhancer (the de-leak label source).
+"""Score OCT-SOX insertion effects (real vs shuffled) per fibroblast enhancer with ChromBPNet.
 
-For the top-N skin-biceps fibroblast DNase peaks (the substrate whose AlphaGenome
-NTR:0000521 head we will de-leak), score with the fibroblast ChromBPNet:
-  s0        base central signal
-  s_real    OCT-SOX inserted in the flanks (4 offsets)  -> real effect
-  s_shuf    mono-shuffled OCT-SOX inserted (k seeds, averaged) -> generic control
-and record log2FC(real) and log2FC(shuffle). ChromBPNet is our oracle for "what
-OCT-SOX SHOULD do to fibroblast accessibility" (no OCT-SOX-specific drop); the
-gap log2FC(real) - log2FC(shuffle) is ~0 for ChromBPNet but large (negative) for
-the leaking AlphaGenome head. These per-enhancer log2FC(real) values become the
-target relative-effect AlphaGenome is fine-tuned to reproduce.
+Outputs (outputs/): cbp_oracle_<split>.csv.
 
 Run (env: featleak-dl):
-    conda run -n featleak-dl python 01_cbp_oracle.py --n-loci 400
+    python 01_cbp_oracle.py --n-loci 400 --split train
 """
 
 from __future__ import annotations

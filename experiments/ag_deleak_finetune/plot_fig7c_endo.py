@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""Figure 7c: ISM logos at an endogenous OCT-SOX site, original vs fine-tuned AlphaGenome.
+"""Plot ISM logos at an endogenous OCT-SOX site for the original and fine-tuned heads (Figure 7c).
 
-Contribution = log2 A(reference base) - mean over the four bases of log2 A, from
-endo_ism.py; minus-strand sites are drawn in motif orientation (reverse complement).
+Outputs (outputs/dermis_torch/): fig7_c_ism_endo_<chrom>_<mid>.{pdf,png}.
 
-    python plot_fig7c_endo.py --site chr9:92379377     # any env with logomaker
+Run (env: featleak-dl):
+    python plot_fig7c_endo.py --site chr9:92379377
 """
 
 from __future__ import annotations

@@ -1,13 +1,9 @@
 #!/usr/bin/env python
-"""Endogenous OCT-SOX ablation at one locus, as predicted DNase tracks.
+"""Plot predicted DNase tracks at one endogenous OCT-SOX locus, motif intact vs shuffled, before vs after fine-tuning.
 
-Reads an npz from `finetune_dermis_torch.py --stage endo_track`: predicted dermal
-fibroblast DNase over the central 300 bp with the endogenous OCT-SOX intact and with its
-14 bp dinucleotide-shuffled, for the pretrained and the fine-tuned head. Before
-fine-tuning AlphaGenome predicts LESS accessibility with the motif present; afterwards
-the two profiles coincide.
+Outputs (outputs/dermis_torch/): <npz stem>.{pdf,png}.
 
-Run (any env with matplotlib):
+Run (env: featleak-dl):
     python plot_endo_track.py --npz endo_track_chr9_444726.npz
 """
 

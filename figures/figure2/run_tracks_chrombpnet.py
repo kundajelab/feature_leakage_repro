@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Figure 2D (ChromBPNet): example accessibility tracks before/after OCT-SOX.
+"""Predict ChromBPNet accessibility profiles at an example peak with 0-4 OCT-SOX insertions (Figure 2d).
 
-Faithful port of alphagenome/alphagenome_marginalizations.ipynb (cells 18-25):
-ScaledProfileWrapper(BPNet.from_chrombpnet) gives per-position expected counts;
-we insert 1-4 OCT-SOX motifs around the example fibroblast peak
-(chr2:72,788,900-72,789,080) and plot the 5 full profiles stacked, all on the
-SAME y-axis (global max * 1.2). ChromBPNet's peak is essentially unchanged.
+Outputs (outputs/): chrombpnet_insertion_tracks_<tag>.pdf and chrombpnet_track_data_<tag>.npz.
 
 Run (env: featleak-dl):
     python run_tracks_chrombpnet.py

@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-"""Figure 1 OCT-SOX ablation as log2 fold-change: whole-track vs local window.
+"""Plot OCT-SOX ablation log2 fold-change boxplots (whole-track and local window) from run_alphagenome.py / run_grelu.py outputs.
 
-log2FC = log2( pred(with motif) / pred(ablated) ), per OCT-SOX instance.
-Two versions, because it matters a lot which signal you take the ratio of:
-  * WHOLE-TRACK sum  -> log2FC collapses toward 0 (the local motif effect is a
-    tiny fraction of the summed track), so it looks empty/uninformative.
-  * LOCAL window (+/-~500 bp around the motif) -> the ratio is meaningful and
-    negative = repressive (the leakage direction), comparable across models.
+Outputs (outputs/): fig1_octsox_boxplot_logfc.pdf/.png and fig1_octsox_boxplot_logfc_local.pdf.
 
-Reads before/after arrays saved by run_alphagenome.py / run_grelu.py.
-Run: python tools/render_with_svg.py figures/figure1/run_logfc_boxplots.py
+Run (env: featleak-dl):
+    python run_logfc_boxplots.py
 """
 
 from __future__ import annotations

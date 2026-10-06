@@ -1,8 +1,4 @@
-"""The shared Figure 2 enhancer set: the top-N dermal-fibroblast DNase peaks (ENCSR000EPO).
-
-Every model in the raw-insertion analysis (Fig 2b, Supp 2a) is scored on exactly these
-sequences, centred on the peak midpoint, with OCT-SOX written at the same offsets.
-"""
+"""Shared Figure 2 enhancer set: the top dermal-fibroblast DNase peaks (ENCSR000EPO)."""
 from __future__ import annotations
 
 import sys

@@ -1,29 +1,10 @@
 #!/usr/bin/env python
-"""Figure 1 E-H (Beluga): per-cell-type motif effects with four attribution methods.
+"""Compute Beluga per-hit, per-task motif effects with four estimators by affinity quartile (Figure 1 E-H).
 
-For one motif (OCT-SOX, AP-1, HNF4 or CTCF) this script samples genomic FIMO hits
-in four affinity quartiles and, for every one of Beluga's 334 DNase tasks,
-estimates the motif's effect on the task logit with four methods:
-
-    deeplift        DeepLIFT/SHAP (dinucleotide-shuffled references), summed over
-                    the motif span
-    ism             in-silico saturation mutagenesis: for every motif position,
-                    logit(reference base) - mean logit(3 alternative bases), summed
-                    over the span
-    ablation        logit(original) - mean logit(motif span shuffled)
-    marginalization mean logit(background + motif) - logit(background), where the
-                    backgrounds are dinucleotide shuffles of the hit's own locus
-
-All effects are on the pre-sigmoid logit, so that tasks with saturated
-probabilities are comparable. Per-hit x per-task effects are saved so plots can
-be regenerated (means, spread, subsets) without recomputation.
-
-Hit sets (--hit-set):
-    genome   hits sampled genome-wide
-    ccre     hits overlapping an ENCODE cCRE (V3, DNase-anchored regulatory elements)
+Outputs (outputs/beluga_grid/): beluga_<motif>_<hit-set><tag>.npz.
 
 Run (env: featleak-dl):
-    python run_beluga_grid.py --motif OCT-SOX --hit-set genome --device cuda:1
+    python run_beluga_grid.py --motif OCT-SOX --hit-set genome --n-per-quartile 3000 --tag _big
 """
 
 from __future__ import annotations

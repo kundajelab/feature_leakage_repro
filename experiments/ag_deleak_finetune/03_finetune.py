@@ -1,23 +1,10 @@
 #!/usr/bin/env python
-"""Fine-tune AlphaGenome's native DNase head to remove OCT-SOX leakage.
+"""Fine-tune AlphaGenome's DNase head (JAX) to remove the OCT-SOX insertion effect.
 
-Trains ONLY the 6 `alphagenome/head/dnase/*` leaves (backbone + all other heads
-frozen, enforced by the heads-only optax mask). Two de-leak objectives, selectable:
+Outputs (outputs/): ft_dnase_<objective>_lam<lam>_lr<lr>_s<steps><tag>.pkl.
 
-  A  corrected-target invariance: on OCT-SOX-inserted E', match the central-window
-     profile to  AG_base(E) * 2^(cbp_lfc_real(E))  (ChromBPNet says ~no effect, so
-     E' should look like E). Base target precomputed & frozen.
-  B  online paired-logFC: penalize ( AG_log2fc(E',E) - cbp_lfc_real(E) )^2, with
-     AG_log2fc from the CURRENT model (two forwards/step).
-
-FIDELITY anchor (both, "don't degrade"): self-distillation — keep the central
-profile on the base sequences close to the FROZEN pre-FT prediction. Preserves
-Pearson-r vs experiment by construction (validated independently in 04_eval).
-
-The forward + optimizer update is a single jitted step over pre-encoded one-hot
-arrays (the raw Haiku apply_fn compiles once). Run (env: alphagenome-ft):
-    ... conda run --no-capture-output -n alphagenome-ft python -u 03_finetune.py \
-        --objective A --steps 300 --lam 1.0 --lr 3e-3
+Run (env: alphagenome-ft):
+    python 03_finetune.py --objective A --steps 300 --lam 1.0 --lr 3e-3
 """
 
 from __future__ import annotations

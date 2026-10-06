@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-"""Frozen pre-FT AlphaGenome profiles on the TRAIN-chromosome enhancers.
+"""Predict pre-fine-tuning AlphaGenome DNase profiles on the training-chromosome enhancers.
 
-Produces ag_base_train.npz (coords, cbp_lfc_real, ag_base_profiles) — the inputs the
-fine-tuner needs: corrected targets = AG_base * 2^cbp_lfc, and self-distillation
-fidelity anchors. TRAIN chromosomes only (chr8/chr9 held out for evaluation).
+Outputs (outputs/): ag_base_train.npz.
 
 Run (env: alphagenome-ft):
-    ... conda run --no-capture-output -n alphagenome-ft python -u 02_ag_base_train.py
+    python 02_ag_base_train.py
 """
 
 from __future__ import annotations

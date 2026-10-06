@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-"""Fig 2 C/D as a MATCHED figure: same bp window for ChromBPNet and AlphaGenome.
+"""Plot ChromBPNet and AlphaGenome OCT-SOX insertion tracks on the same bp window (Figure 2c/d).
 
-Loads the profile data saved by run_tracks_chrombpnet.py and
-run_tracks_alphagenome.py and plots both on the SAME genomic window (bp), with
-each model's y-axis units labelled (they are not comparable in absolute value:
-ChromBPNet = expected Tn5 counts/bp; AlphaGenome = its own predicted DNase
-signal). ChromBPNet's peak stays; AlphaGenome's shrinks with OCT-SOX.
+Outputs (outputs/): tracks_matched_window<suffix>.{pdf,png}.
 
-Run (any env, no GPU): python run_tracks_matched.py --window 500
+Run (env: featleak-dl):
+    python run_tracks_matched.py --cbp-tag dermis --ag-tag dermis --suffix _dermis
 """
 
 from __future__ import annotations

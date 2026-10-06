@@ -1,21 +1,10 @@
 #!/usr/bin/env python
-"""Figure 1C (AlphaGenome, full-length input): OCT-SOX ablation log2 fold-change.
+"""Compute the Figure 1C per-site OCT-SOX ablation log2 fold-change of dermal-fibroblast DNase with AlphaGenome (PyTorch).
 
-Scores exactly the OCT-SOX sites written by run_chrombpnet_logfc.py (FIMO hits
-200-500 bp from a dermal-fibroblast DNase summit), so AlphaGenome and ChromBPNet
-are compared on the same loci and the same ENCODE experiment (ENCSR000EPO).
-
-For each site the 524,288 bp window centred on the motif is scored with the motif
-intact and with the central 14 bp dinucleotide-shuffled. Effect is the log2
-fold-change of predicted dermal-fibroblast DNase (channel 60, CL:0002551) summed
-over +/-500 bp around the motif:
-
-    log2FC = log2( signal(with motif) / signal(ablated) )     (<0: motif represses)
-
-Uses the PyTorch port of AlphaGenome (all-folds weights, matches the JAX model).
+Outputs (outputs/): fig1_alphagenome_octsox_logfc<tag><out-suffix>.npy.
 
 Run (env: featleak-agtorch):
-    python run_alphagenome_torch.py
+    CUDA_VISIBLE_DEVICES=0 python run_alphagenome_torch.py --seq-len 2048 --max-loci 400 --out-suffix _2kb
 """
 
 from __future__ import annotations

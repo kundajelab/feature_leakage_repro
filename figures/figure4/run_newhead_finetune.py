@@ -1,45 +1,12 @@
 #!/usr/bin/env python
-"""Figure 4 supplement: does a factor leak into a NEWLY fine-tuned head?
+"""Fine-tune a new head on a multi-task FOS/OCT4 CNN and test whether the other factor's motif leaks into it (Figure 4 supplement).
 
-Motivation (Discussion of the paper): "adding more task-specific layers or
-fine-tuning a multitask model on one task does not necessarily remove a spurious
-association if the shared trunk already represents it." We test this in the
-FOS/OCT4 setting in BOTH directions:
-
-  --new-head oct4  : add a new OCT4 head, fine-tune on OCT4 peaks vs background,
-                     and ask whether the FOS (AP-1) motif leaks into it.
-  --new-head fos   : add a new FOS/AP1 head, fine-tune on FOS peaks vs background,
-                     and ask whether the OCT-SOX motif leaks into it.
-
-Procedure (identical for both, only the task/motif roles swap)
---------------------------------------------------------------
-1. Train the LEAKY multitask FOS+OCT4 CNN on the union of FOS and OCT4 peaks
-   (helpers_4.train_multitask_model). task 0 = FOS/AP1, task 1 = OCT4.
-2. ADD A NEW head for the chosen task (expand the output layer 2 -> 3; new head
-   index 2; existing FOS/OCT4 rows copied verbatim).
-3. FULL end-to-end FINE-TUNE on the chosen task's objective ONLY: positives = that
-   factor's ChIP peaks, negatives = background regions; loss = BCE on the new head
-   (index 2). The new head's own training signal contains NO information about the
-   OTHER factor (it never sees the other factor's peaks as a labelled contrast) --
-   so any sensitivity it acquires to the other factor's motif can only come from
-   the shared representation.
-4. Marginalize the OTHER factor's motif and measure its effect on the NEW head.
-   A significant nonzero effect = that motif leaks into the new head. We compare:
-     - leak motif on its OWN task's head        -> its real, strong task response,
-     - leak motif on the ORIGINAL head of the new head's task,
-     - leak motif on the NEW head               -> the leak test,
-     - the new head's OWN motif on the NEW head -> the legitimate signal (control
-       that the new head genuinely learned its task).
-
-Outputs (outputs/); the oct4 run keeps the original unsuffixed names, the fos run
-adds a "_fos" suffix:
-    newhead[_fos]_finetune_effect.pdf     leak-motif effect across heads + control
-    newhead[_fos]_attribution_logos.pdf   example ISM logos (leak on new head, ...)
-    newhead[_fos]_finetune_stats.txt      medians, Wilcoxon p-values, AUCs
+Outputs (outputs/): newhead[_fos]_finetune_effect.{pdf,png,svg},
+newhead[_fos]_attribution_logos.{pdf,png,svg} and newhead[_fos]_finetune_stats.txt.
 
 Run (env: featleak-dl):
-    python run_newhead_finetune.py --new-head oct4      # FOS leaks into new OCT4 head
-    python run_newhead_finetune.py --new-head fos       # OCT-SOX leaks into new FOS head
+    python run_newhead_finetune.py --new-head oct4
+    python run_newhead_finetune.py --new-head fos
 """
 
 from __future__ import annotations

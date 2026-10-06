@@ -1,3 +1,5 @@
+"""Motif marginalization and ablation helpers for the AlphaGenome Figure 1 notebooks."""
+
 import numpy as np
 from alphagenome.data import genome
 from alphagenome.models import dna_client

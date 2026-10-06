@@ -1,13 +1,9 @@
 #!/usr/bin/env python
-"""Figure 2 supplement: OCT-SOX effect for Enformer / Borzoi vs matched ChromBPNet.
+"""Plot the shuffle-corrected OCT-SOX effect for Enformer / Borzoi vs ChromBPNet (Figure 2 supplement).
 
-Same shuffle-corrected SPECIFICITY (log2FC(real) - log2FC(shuffled)) as panel b, for
-the two other multi-task models (Enformer, Borzoi; canonical fibroblast-of-dermis DNase
-task ENCFF302JEV) against the EXPERIMENT-MATCHED ChromBPNet dermis model (ENCSR000EPO).
-Enformer/Borzoi show OCT-SOX-specific repression (leakage); matched ChromBPNet does not.
+Outputs (outputs/): supplement_octsox_specificity.{pdf,png,svg}.
 
-Reads outputs/grelu_{enformer,borzoi}_canonical.npz (keys real, shuf) and
-outputs/cbp_octsox_specificity_dermis.csv. Run (env: featleak-dl, no GPU):
+Run (env: featleak-dl):
     python run_boxplot_supplement.py
 """
 from __future__ import annotations

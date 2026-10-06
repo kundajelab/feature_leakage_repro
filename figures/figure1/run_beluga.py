@@ -1,18 +1,7 @@
 #!/usr/bin/env python
-"""Figure 1 E-H (Beluga): per-cell-type motif effects, split by affinity quartile.
+"""Compute and plot Beluga per-cell-type motif effects by affinity quartile (Figure 1 E-H).
 
-For each motif (OCT-SOX, AP-1, HNF4, CTCF), measures how ablating (or inserting)
-the motif changes Beluga's predicted accessibility across its 334 DNase tasks,
-separately for four FIMO-affinity quartiles. The result: OCT-SOX / AP-1 / HNF4
-motifs are predicted to DRIVE accessibility in some cell types but REPRESS it in
-others (a biologically implausible split), while the CTCF positive control is
-almost uniformly non-negative.
-
-Method options (paper uses all four; ablation & marginalization are fastest):
-    ablation        - dinuc-shuffle the motif in real genomic loci
-    marginalization - insert the motif into random backgrounds
-
-Outputs (outputs/): fig1_beluga_<motif>_<method>.pdf and a metrics npz.
+Outputs (outputs/): fig1_beluga_<motif>_<method>.pdf and fig1_beluga_<method>_effects.npz.
 
 Run (env: featleak-dl):
     python run_beluga.py --method ablation --sample-size 400

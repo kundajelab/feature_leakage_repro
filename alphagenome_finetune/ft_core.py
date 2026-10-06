@@ -1,31 +1,9 @@
 #!/usr/bin/env python
-"""Core module for fine-tuning AlphaGenome's NATIVE pretrained DNase head.
+"""Differentiable forward pass and heads-only optimizer for fine-tuning AlphaGenome's DNase head.
 
-Target track: DNase NTR:0000521 = "fibroblast of skin of left biceps",
-channel index **207** of 384 (same index in the 305 non-padded space).
-
-This module does NOT touch the standard analysis path or modify any installed
-package. It reconstructs a *differentiable* forward pass around the real
-pretrained model so we can fine-tune ONLY the native DNase head:
-
-    model = load_model()                       # full pretrained AlphaGenome
-    apply_fn = get_apply_fn(model)             # raw Haiku forward (differentiable)
-    fwd = make_dnase_forward(apply_fn)         # -> channel-207 DNase, (B,S)
-    opt = make_heads_only_optimizer(model._params)   # zeroes every non-DNase leaf
-
-Why not just call ``model.predict_sequence``? That path is ``jax.jit``-wrapped,
-runs on numpy inputs, filters/reshapes outputs, and applies reverse-complement
-augmentation logic. For training we need a plain, traceable function of
-``params`` that returns the raw count-space profile. We recover the exact raw
-``apply_fn`` that ``predict_sequence`` itself uses (see ``get_apply_fn``), so the
-two are numerically identical (verified: max abs diff ~1e-6, corr >0.9999).
-
-Environment (GPU libs need conda activation):
-    cd /users/kobbad/feature_leakage_repro && \
-      CUDA_VISIBLE_DEVICES=0 XLA_PYTHON_CLIENT_MEM_FRACTION=0.5 \
-      FEATLEAK_AKUNDAJE_ROOT=/oak/stanford/groups/akundaje \
-      /users/kobbad/anaconda3/bin/conda run -n alphagenome-ft \
-      python alphagenome_finetune/ft_core.py         # runs gates #2 and #4
+Run (env: alphagenome-ft; runs the module self-test):
+    CUDA_VISIBLE_DEVICES=0 XLA_PYTHON_CLIENT_MEM_FRACTION=0.5 \
+        conda run -n alphagenome-ft python alphagenome_finetune/ft_core.py
 """
 
 from __future__ import annotations

@@ -1,12 +1,4 @@
-"""Shared volcano plot for OCT-SOX marginalization slopes across DNase tasks.
-
-Green  = FDR-significant repressive (slope < 0)  -- spurious/leakage direction
-Orange = FDR-significant positive   (slope > 0)
-Grey   = not significant
-Stars  = pluripotent (stem/ESC/iPSC) cell types -- where OCT-SOX (Oct4/Sox2) is a
-         real activating motif, so they should be POSITIVE.
-Rings  = fibroblast cell types (the spurious repression of interest).
-"""
+"""Shared volcano plot of OCT-SOX marginalization slopes across DNase tasks."""
 
 from __future__ import annotations
 

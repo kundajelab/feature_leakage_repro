@@ -1,17 +1,10 @@
 #!/usr/bin/env python
-"""Figure 2 panel b: OCT-SOX effect, AlphaGenome vs matched ChromBPNet.
+"""Plot the shuffle-corrected OCT-SOX effect for AlphaGenome vs ChromBPNet (Figure 2 panel b).
 
-Violin of the per-enhancer OCT-SOX SPECIFICITY (= shuffle-corrected log2 fold-change:
-log2FC(real OCT-SOX inserted) - log2FC(shuffled OCT-SOX inserted)) across the top
-fibroblast enhancers, for multi-task AlphaGenome (skin-biceps DNase, NTR:0000521) vs
-the EXPERIMENT-MATCHED single-task ChromBPNet (skin-biceps, ENCSR562ACY).
+Outputs (outputs/): panelb_octsox_specificity.{pdf,png,svg}.
 
-Shuffle-correction is essential: base-resolution ChromBPNet's RAW log2FC is dominated
-by generic 14-bp-insertion disruption (also ~ -0.36), which cancels against its shuffle
-control -- leaving no OCT-SOX-specific effect. AlphaGenome's stays strongly negative.
-
-Reads outputs/ag_octsox_specificity.csv + outputs/cbp_octsox_specificity_skinbiceps.csv.
-Run (env: featleak-dl, no GPU):  python run_boxplot.py
+Run (env: featleak-dl):
+    python run_boxplot.py
 """
 from __future__ import annotations
 

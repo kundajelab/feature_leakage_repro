@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-"""Supplementary Fig 2a: raw OCT-SOX insertion effect in Enformer / Borzoi (no shuffle subtraction).
+"""Compute the raw OCT-SOX insertion effect in Enformer / Borzoi on the Figure 2 enhancers (Supp 2a).
 
-Same 120 enhancers and insertions as run_raw_alphagenome.py. S is the fibroblast-of-dermis
-DNase task (ENCFF302JEV, from ENCSR000EPO) summed over the central 1,024 bp (Enformer 8 x
-128 bp bins, Borzoi 32 x 32 bp bins); effect = log2[(S_inserted + 1e-3) / (S_original + 1e-3)].
-The old +/-300 bp readout (5 / 19 bins) is saved alongside.
+Outputs (outputs/): raw_insertion_<model>.csv.
 
 Run (env: featleak-dl):
     CUDA_VISIBLE_DEVICES=0 python run_raw_grelu.py --model enformer
     CUDA_VISIBLE_DEVICES=0 python run_raw_grelu.py --model borzoi
-Writes outputs/raw_insertion_<model>.csv.
 """
 from __future__ import annotations
 

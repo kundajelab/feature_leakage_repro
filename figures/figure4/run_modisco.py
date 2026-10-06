@@ -1,18 +1,11 @@
 #!/usr/bin/env python
-"""Figure 4A/B + supplement (a-c): ISM logos and TF-MoDISco motif discovery.
+"""ISM contribution logos and TF-MoDISco motif discovery for the Figure 4 FOS/OCT4 models (Figure 4a/b, supplement a-c).
 
-Trains the three canonical models and shows, via ISM contribution logos at a
-locus containing both an AP1 and an OCT-SOX motif, that:
-  * the multi-task AP1 head assigns (implausible) contribution to the OCT-SOX
-    motif (supp a),
-  * the multi-task OCT-SOX head assigns contribution to the AP1 motif (supp b),
-  * the balanced single-task AP1 model does not respond to OCT-SOX (supp c).
-
-Then runs modiscolite on each model's attributions over its positive peaks to
-reproduce the Panel B table (does the model learn AP-1 and/or OCT-SOX?).
+Outputs (outputs/): saturation_mutagenesis_logo_*.pdf and, with --modisco,
+modisco_multitask.h5 and modisco_single_task.h5.
 
 Run (env: featleak-dl):
-    python run_modisco.py [--modisco]     # --modisco adds the (slow) Panel B step
+    python run_modisco.py --modisco
 """
 
 from __future__ import annotations

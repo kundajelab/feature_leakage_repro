@@ -1,34 +1,16 @@
 #!/usr/bin/env python
-"""Figure 7: gated fine-tuning of AlphaGenome's dermal-fibroblast DNase track.
+"""Gated fine-tuning of AlphaGenome's dermal-fibroblast DNase track and its evaluation (Figure 7).
 
-Everything reads ONE ENCODE experiment, ENCSR000EPO (fibroblast of dermis):
-  * AlphaGenome track CL:0002551 (DNase channel 60), full 524,288 bp input,
-    PyTorch port with the all-folds weights (matches the JAX model).
-  * ChromBPNet referee `chrombpnet_dermis` (trained on ENCSR000EPO).
-  * enhancers = ENCSR000EPO peaks (`peaks_dermis`); observed = ENCFF302JEV.
+Outputs (outputs/dermis_torch/): cached embeddings, ft_head_dermis.pt, panel_b_fidelity.csv,
+panel_d_heldout.csv and ISM npz files.
 
-Only the dermis track's slice of the 1 bp DNase head is trained (1,536 weights +
-bias + residual scale = 1,538 parameters); the trunk is frozen. The 1 bp head acts
-on each position independently, so trunk embeddings of the central 300 bp are
-cached once per sequence and training on them is exactly heads-only fine-tuning
-at full context.
-
-Objective C (as before): loss = fidelity + lam * de-leak, where
-  fidelity = mean (log1p(pred_ft(E)) - log1p(pred_base(E)))^2 over the central 300 bp
-  de-leak  = mean over GATED enhancers of log2FC_ft(E', E)^2
-  gate     = |ChromBPNet log2FC(E', E)| < 0.2  (ChromBPNet says OCT-SOX does nothing)
-E' = enhancer E with OCT-SOX written at +-150 / +-200 bp. Chromosomes 8/9 are held
-out; evaluation uses a single OCT-SOX at -100 bp (a position never trained on).
-
-Stages (env: featleak-agtorch):
-    python finetune_dermis_torch.py --stage cache     # trunk embeddings + ChromBPNet gate (GPU)
-    python finetune_dermis_torch.py --stage train     # fine-tune the 1,538 parameters (seconds)
-    python finetune_dermis_torch.py --stage eval      # panels b, d data (GPU)
-    python finetune_dermis_torch.py --stage ism --ism-locus chr9:127021880
-                                                      # panel c: ISM around OCT-SOX inserted at
-                                                      # -100 bp (writes panel_c_ism.npz; GPU)
-`--stage gate` (ChromBPNet referee, before train) and `--stage obs` (observed bigWig,
-before eval) run in the featleak-dl env.
+Run (env: featleak-agtorch unless noted):
+    python finetune_dermis_torch.py --stage cache    # trunk embeddings (GPU)
+    python finetune_dermis_torch.py --stage gate     # ChromBPNet gate (env featleak-dl)
+    python finetune_dermis_torch.py --stage train
+    python finetune_dermis_torch.py --stage obs      # observed bigWig windows (env featleak-dl)
+    python finetune_dermis_torch.py --stage eval     # panels b, d (GPU)
+    python finetune_dermis_torch.py --stage ism --ism-locus chr9:127021880   # GPU
 """
 
 from __future__ import annotations

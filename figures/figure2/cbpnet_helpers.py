@@ -1,9 +1,4 @@
-"""Helpers for Figure 2 ChromBPNet ablation / marginalization.
-
-Vendored and trimmed from chrombpnet_2/utils.py -- the heavy alphagenome/grelu
-top-level imports of the original are dropped so this module only needs
-tangermeme + pandas + numpy.
-"""
+"""Helpers for the Figure 2 ChromBPNet OCT-SOX insertion and track analyses."""
 
 from __future__ import annotations
 

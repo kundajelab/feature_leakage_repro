@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-"""Figure 2C (AlphaGenome, local model): example accessibility tracks.
+"""Predict AlphaGenome fibroblast DNase tracks at an example peak with 0-4 OCT-SOX insertions (Figure 2c).
 
-Predicts AlphaGenome's fibroblast DNase profile at the example peak
-(chr2:72,788,900-72,789,080) before and after inserting 1-4 OCT-SOX motifs.
-AlphaGenome's predicted peak SHRINKS as OCT-SOX motifs are added -- the spurious
-repression (contrast with ChromBPNet, run_tracks_chrombpnet.py).
+Outputs (outputs/): alphagenome_insertion_tracks_<tag>.pdf and alphagenome_track_data_<tag>.npz.
 
 Run (env: featleak-alphagenome):
     python run_tracks_alphagenome.py

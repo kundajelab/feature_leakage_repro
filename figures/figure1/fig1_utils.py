@@ -1,9 +1,4 @@
-"""Shared helpers for Figure 1 (affinity-quartile sorted-scatter machinery).
-
-Adapted from enformer_insertions/utils.py -- the parts that split FIMO motif
-hits into affinity quartiles and render the sorted per-cell-type scatter used in
-panels E-H.
-"""
+"""Shared helpers for Figure 1 E-H: affinity-quartile sampling of FIMO hits and sorted per-cell-type scatters."""
 
 from __future__ import annotations
 

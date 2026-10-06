@@ -1,10 +1,4 @@
-"""Chromosome holdout for the de-leaking experiment.
-
-Fine-tuning (enhancers + fidelity anchors) uses TRAIN chromosomes only; ALL
-evaluation (leakage on held-out enhancers, fidelity Pearson r, insertion effect,
-attributions) uses TEST chromosomes only. No chromosome is shared, so there is no
-train/test sequence contamination.
-"""
+"""Train/test chromosome split (chr8/chr9 held out) for the fine-tuning experiment."""
 
 from __future__ import annotations
 

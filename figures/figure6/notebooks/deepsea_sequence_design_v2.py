@@ -1,3 +1,5 @@
+"""Greedy motif-insertion design of 500 random sequences with Beluga for keratinocyte vs melanocyte, saved to all_results_new.pkl."""
+
 import os
 import sys
 os.environ['CUDA_VISIBLE_DEVICES'] = 'GPU-fbdc2a7b-c9f5-5e02-17f9-4e00342e866c'

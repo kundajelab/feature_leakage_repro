@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-"""Quantify ChromBPNet central-peak change under OCT-SOX insertion (0..4).
+"""Quantify ChromBPNet central fibroblast DNase signal at the top-ranked enhancers with 0-4 OCT-SOX insertions.
 
-Reports, per candidate enhancer, the ChromBPNet central-window total signal at
-each insertion level and the fraction retained at 4 insertions. A good Fig-2
-ChromBPNet example STAYS high (no leakage). Pair with the AlphaGenome side
-(run_ag_quantify.py) to pick a locus that leaks in AG but not ChromBPNet.
+Outputs (outputs/): chrombpnet_quant.csv.
 
 Run (env: featleak-dl):
     python run_quantify.py

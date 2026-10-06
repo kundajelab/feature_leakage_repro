@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-"""Supp-Fig-2 f/g style marginalization volcano for Enformer / Borzoi.
+"""Compute and plot the OCT-SOX marginalization volcano across Enformer or Borzoi DNase tasks (Supplementary Figure 2).
 
-Insert 0..K OCT-SOX motifs into N random background sequences; for EVERY DNase
-task/cell type, linear-fit the (baseline-normalized) predicted DNase against the
-number of insertions -> slope per insertion + p-value. Volcano: x = slope,
-y = -log10(p). Green = FDR-significant repressive (slope<0), orange = significant
-positive (slope>0), blue = n.s.  Saves a per-task CSV and the volcano PDF.
+Outputs (outputs/): volcano_<model>_raw.npz and volcano_<model>[_specificity].csv/.pdf.
 
 Run (env: featleak-dl):
     python run_volcano_grelu.py --model enformer --n-bg 40
-    python run_volcano_grelu.py --model borzoi   --n-bg 40
+    python run_volcano_grelu.py --model borzoi --n-bg 40
 """
 
 from __future__ import annotations

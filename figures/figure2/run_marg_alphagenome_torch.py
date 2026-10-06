@@ -1,22 +1,9 @@
 #!/usr/bin/env python
-"""Figure 2b (AlphaGenome side, full-length input): OCT-SOX insertion effect.
+"""Compute the AlphaGenome (PyTorch port) OCT-SOX insertion effect at full input length (Figure 2b).
 
-Same test as run_marg_alphagenome.py, but using the PyTorch port of AlphaGenome
-(all-folds weights; matches the JAX model to r=0.9999 on this test) so that the
-full 524,288 bp input fits on one GPU.
+Outputs (outputs/): ag_octsox_specificity<tag>.csv.
 
-For the top --n-loci enhancers of the fibroblast peak set, OCT-SOX (ATTGTTATGCAAAT)
-is written into the flanks at +-150 / +-200 bp. The readout is the predicted DNase
-of one AlphaGenome track summed over the central 300 bp:
-
-    log2fc_real   log2(after OCT-SOX insertion / before)
-    log2fc_shuf   same for 3 shuffled OCT-SOX sequences (composition control)
-    specificity   log2fc_real - log2fc_shuf   (<0: OCT-SOX-specific repression)
-
-Default track: DNase channel 60 = CL:0002551 fibroblast of dermis (ENCODE ENCSR000EPO),
-the experiment matched by ChromBPNet `chrombpnet_dermis`.
-
-Run (env: featleak-agtorch, the alphagenome-pytorch env):
+Run (env: featleak-agtorch):
     python run_marg_alphagenome_torch.py --n-loci 120 --seq-len 524288
 """
 

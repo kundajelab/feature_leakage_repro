@@ -1,16 +1,10 @@
 #!/usr/bin/env python
-"""Styled single-box OCT-SOX log2FC boxplots (Fig-1 look) for AlphaGenome & ChromBPNet.
+"""Plot the Figure 1C OCT-SOX ablation log2 fold-change boxplots for AlphaGenome and ChromBPNet.
 
-Matches the compact reference style: one narrow gray box, black median, a "*" when
-the one-sided Wilcoxon (repressive, median<0) is significant. Both use the same
-per-locus log2 fold-change of predicted accessibility on a LOCAL window:
-  * AlphaGenome: log2( pred_local(with motif) / pred_local(ablated) ), +/-~500 bp,
-    from the arrays saved by run_alphagenome.py.
-  * ChromBPNet:  (logcounts_with - logcounts_ablated)/ln2 over its 1000 bp output,
-    from run_chrombpnet_logfc.py.
-Negative = motif represses predicted accessibility (leakage direction).
+Outputs (outputs/): fig1_alphagenome_octsox_logfc_styled.pdf and fig1_chrombpnet_octsox_logfc_styled.pdf.
 
-Run: python tools/render_with_svg.py figures/figure1/run_logfc_styled.py
+Run (env: featleak-dl):
+    python run_logfc_styled.py
 """
 
 from __future__ import annotations

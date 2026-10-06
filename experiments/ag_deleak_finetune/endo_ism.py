@@ -1,11 +1,10 @@
 #!/usr/bin/env python
-"""Figure 7c: narrow-window ISM at an endogenous OCT-SOX site, original vs fine-tuned head.
+"""Compute ISM around an endogenous OCT-SOX site for the original and fine-tuned heads (Figure 7c).
 
-Window = the 14 bp motif (centred on the FIMO hit, as in endo_screen.py) +- FLANK bp.
-Every base is substituted with each alternative; readout A = predicted dermis DNase summed
-over +-500 bp around the motif (same as endo_screen.py). Saves log2(A) per (position, base).
+Outputs (outputs/dermis_torch/endo_screen/): ism_<chrom>_<mid>.npz.
 
-    python endo_ism.py chr9:92379377          # env featleak-agtorch, GPU
+Run (env: featleak-agtorch, GPU):
+    python endo_ism.py chr9:92379377
 """
 
 from __future__ import annotations

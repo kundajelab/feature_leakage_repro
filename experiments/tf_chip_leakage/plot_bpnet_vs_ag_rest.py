@@ -1,14 +1,10 @@
 #!/usr/bin/env python
-"""REST ChIP leakage summary: AlphaGenome (K562 REST track) vs ENCODE REST BPNet models.
+"""Plot REST ChIP log2FC after motif insertion for AlphaGenome vs the REST BPNet models (Supplementary Fig. 2e).
 
-For the four motifs that repress AlphaGenome's REST track, plots the median log2FC
-of predicted REST ChIP after inserting the motif (2 copies, +-120 bp from a central
-REST motif): AlphaGenome as a bar, the four single-task REST BPNet models (one per
-K562 REST ChIP-seq experiment) as dots (filled = the two experiments AlphaGenome's
-REST tracks were trained on) shown individually.
+Outputs (outputs/bpnet_rest/): rest_leakage_ag_vs_bpnet.{pdf,png}.
 
-Reads outputs/rest_leakage_logfc.csv and outputs/bpnet_rest/bpnet_rest_leakage.csv.
-Run (any env with matplotlib): python plot_bpnet_vs_ag_rest.py
+Run (env: featleak-dl):
+    python plot_bpnet_vs_ag_rest.py
 """
 
 from pathlib import Path

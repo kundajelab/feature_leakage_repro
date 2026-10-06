@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-"""Endogenous OCT-SOX ablation screen (held-out chr8/chr9 dermis peaks), before vs after.
+"""Plot the endogenous OCT-SOX ablation effects before vs after fine-tuning.
 
-Reads outputs/dermis_torch/endo_sites_mm2.csv from
-`finetune_dermis_torch.py --stage endo_screen`, where each site's motif effect is
-log2(predicted signal with the motif / with the motif scrambled). A negative effect means
-AlphaGenome reads the endogenous OCT-SOX as repressive, which is the leakage signature.
+Outputs (outputs/dermis_torch/): fig7_endo_ablation.{pdf,png}.
 
-Run (any env with matplotlib):  python plot_endo_sites.py
+Run (env: featleak-dl):
+    python plot_endo_sites.py --csv endo_sites_mm2.csv
 """
 
 from __future__ import annotations

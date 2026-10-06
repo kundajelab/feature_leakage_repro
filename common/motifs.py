@@ -1,8 +1,4 @@
-"""Motif resources shared across figures.
-
-Provides the Vierstra archetype consensus lookup used by Figs 3, 5, 6 and the
-canonical short consensus strings that the figure scripts insert / ablate.
-"""
+"""Motif consensus strings and Vierstra archetype lookups shared across figures."""
 
 from __future__ import annotations
 
@@ -14,7 +10,7 @@ from . import config
 
 # --------------------------------------------------------------------------- #
 # Canonical consensus strings used for insertion / ablation experiments.
-# These match the literals hard-coded across the original notebooks.
+# Consensus sequences used for motif insertion and ablation.
 # --------------------------------------------------------------------------- #
 AP1 = "ATGAGTCAC"          # AP-1 / FOS::JUN (counting + entanglement)
 AP1_SHORT = "TGAGTCA"      # 7 bp core used by some ablation windows

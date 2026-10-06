@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-"""Two-bar paper-comparable fidelity: AlphaGenome (pre-FT) vs AlphaGenome fine-tuned (C).
+"""Plot the Pearson r fidelity bar chart for AlphaGenome before vs after fine-tuning.
 
-Same visual style as the 'Fidelity' panel of figure_objective_compare, but using the
-PAPER-COMPARABLE metric (untransformed Pearson r across 1bp bins per interval, averaged
-over 120 held-out chr8/chr9 16kb intervals) — ~0.65, not the generous region-total+log1p
-0.93. De-leaking (objective C, ChromBPNet gate) leaves fidelity unchanged.
+Outputs (outputs/): figure_fidelity_bar_paper.{pdf,svg,png}.
 
-Numbers are the means printed by 21_paperstyle_fidelity.py (--num 120 --win 16384); this
-script just re-plots them (matplotlib only, no GPU/OAK). CPU only.
+Run (env: featleak-dl):
+    python 27_fidelity_bar_prec.py
 """
 from __future__ import annotations
 from pathlib import Path

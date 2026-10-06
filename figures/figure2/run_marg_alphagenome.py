@@ -1,18 +1,9 @@
 #!/usr/bin/env python
-"""Figure 2 panel b: AlphaGenome OCT-SOX marginalization on real fibroblast peaks.
+"""Compute the AlphaGenome OCT-SOX insertion effect (real vs shuffled motif) on fibroblast peaks (Figure 2).
 
-AlphaGenome's native skin-biceps DNase head (channel 207 = NTR:0000521, "fibroblast
-of skin of left biceps" -- the track where the OCT-SOX leakage appears), read at a
-2 kb peak-centred context so it is COMPARABLE to ChromBPNet (which runs at 2114 bp).
-This matters: AlphaGenome's OCT-SOX effect is context-dependent -- strong at ~2 kb
-(the peak-focused window, and the context Figure 6's fine-tuning uses) and diluted at
-16 kb. Reading AG at ChromBPNet's context is the fair comparison.
+Outputs (outputs/): ag_octsox_specificity<tag>.csv.
 
-Insert 4 flank OCT-SOX motifs (and composition-matched shuffled OCT-SOX for the
-control) and record the shuffle-corrected SPECIFICITY = log2FC(real) - log2FC(shuffled).
-Writes outputs/ag_octsox_specificity.csv.
-
-Run (env: alphagenome-ft; needs the AlphaGenome checkpoint):
+Run (env: alphagenome-ft):
     python run_marg_alphagenome.py --n-loci 120
 """
 from __future__ import annotations

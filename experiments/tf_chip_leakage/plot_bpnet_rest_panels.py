@@ -1,14 +1,10 @@
 #!/usr/bin/env python
-"""REST-BPNet version of the AlphaGenome REST ChIP leakage figure (same layout).
+"""Plot the REST BPNet versions of Supplementary Fig. 2e-g panels (log2FC, ISM, profiles) for one experiment.
 
-  a  REST ChIP log2FC after inserting each motif (real vs shuffled), same x-range
-     as the AlphaGenome panel so bars are directly comparable
-  b  ISM -> REST ChIP: REST's own motif (on-target) and the four motifs that leak
-     into AlphaGenome's REST track; leaking-motif logos share one y-scale
-  c  REST ChIP profile with NRF1 / YY1 inserted (real vs shuffled)
+Outputs (outputs/bpnet_rest/): bpnet_rest_panel_<exp>.{pdf,png} and one PDF per panel.
 
-Writes the combined figure plus one PDF per panel (Illustrator-editable text).
-Run (env: featleak-dl):  python plot_bpnet_rest_panels.py --experiment ENCSR000BMW
+Run (env: featleak-dl):
+    python plot_bpnet_rest_panels.py --experiment ENCSR137ZMQ
 """
 
 from __future__ import annotations

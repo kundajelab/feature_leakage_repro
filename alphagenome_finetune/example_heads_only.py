@@ -1,11 +1,7 @@
 #!/usr/bin/env python
-"""Minimal heads-only AlphaGenome fine-tuning skeleton (env: alphagenome-ft).
+"""Set up heads-only fine-tuning of AlphaGenome with a new custom RNA-seq head.
 
-Loads the pretrained AlphaGenome backbone (local weights), attaches a new custom
-head, freezes everything except the head, and builds a heads-only optimizer.
-Fill in the bigWig training/validation paths to actually train.
-
-Run (GPU libs need conda activation — do NOT call the env python directly):
+Run (env: alphagenome-ft):
     CUDA_VISIBLE_DEVICES=0 XLA_PYTHON_CLIENT_MEM_FRACTION=0.4 \
         conda run -n alphagenome-ft python alphagenome_finetune/example_heads_only.py
 """

@@ -1,13 +1,7 @@
 #!/usr/bin/env python
-"""Marginalization PROFILE plots for TF-ChIP leakage in AlphaGenome.
+"""Plot AlphaGenome ChIP-seq profiles of a measured TF averaged over backgrounds, before vs after inserting another TF's motif.
 
-For each (inserted motif TF, measured ChIP TF) pair, average the MEASURED TF's
-predicted ChIP-seq profile over many random background sequences, BEFORE vs
-AFTER inserting the (distinct) motif at the centre. A peak appearing at the
-insertion site in the *wrong* TF's track is the leakage, shown as a profile.
-
-Same pairs as run_ism.py: an on-target control (MAX -> MAX) plus cross-family
-leakage pairs. Uses the local AlphaGenome v1 model (offline).
+Outputs (outputs/): marginalization_profiles_<cell>.pdf.
 
 Run (env: featleak-alphagenome):
     python run_profiles.py --n-backgrounds 16 --cell-type K562

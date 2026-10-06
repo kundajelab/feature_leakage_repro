@@ -1,3 +1,5 @@
+"""Data, model and marginalization helpers for the Figure 4 FOS/OCT4 CNNs."""
+
 import numpy as np
 import pandas as pd
 import sys

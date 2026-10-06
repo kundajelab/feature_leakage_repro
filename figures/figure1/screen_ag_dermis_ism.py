@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-"""Pick the Figure 1A AlphaGenome example: clean repressive OCT-SOX ISM (dermis track).
+"""Screen the most repressive dermis OCT-SOX sites with AlphaGenome ISM to pick the Figure 1A example.
 
-Takes the endogenous OCT-SOX sites of Fig 1C (dermal-fibroblast peaks, ENCSR000EPO),
-ranks them by the 2 kb AlphaGenome ablation log2FC, and runs ISM (100 bp, 2,048 bp
-input, CL:0002551) on the --top most repressive. Scores how much of the window's
-contribution sits in the motif, and writes a contact sheet for visual checking.
+Outputs (outputs/panel_a/): ag_dermis_ism_screen.tsv/.npz and ag_dermis_ism_contact.png.
 
-Run (env: featleak-agtorch):  python screen_ag_dermis_ism.py --top 20
+Run (env: featleak-agtorch):
+    python screen_ag_dermis_ism.py --top 20
 """
 
 from __future__ import annotations

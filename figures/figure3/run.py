@@ -1,19 +1,10 @@
 #!/usr/bin/env python
-"""Figure 3: synthetic AP1-counting task on frozen Beluga reveals feature leakage.
+"""Train an AP-1 counting head on frozen Beluga and measure motif leakage into it (Figure 3).
 
-A single counting head is trained on top of a FROZEN Beluga backbone to count
-AP-1 motifs in random DNA. Despite the backbone being frozen and the task being
-purely about AP-1, the head's predictions are sensitive to many unrelated
-motifs -- evidence that Beluga's representation entangles AP-1 with other motifs.
+Outputs (outputs/): scatter_plot_with_fit.pdf, logo_<motif>.pdf, top_4_motifs_violin_plot.pdf,
+motif_significance_analysis.pdf and motif_effect_results.npz.
 
-Panels reproduced:
-  * Supp (a): predicted vs actual AP-1 count scatter (R ~ 0.78).
-  * Panel B : violin plot of the 4 largest-magnitude leakage effects.
-  * Panels C-G: DeepLIFT logos (AP1, CTCF, EWSR1-FLI1, NFKB1, ZIC1) for the
-    counting output (target=2002).
-  * Supp (b/c): pie of significant motifs + FDR-corrected p-value histogram.
-
-Outputs land in outputs/. Run (env: featleak-dl):
+Run (env: featleak-dl):
     python run.py --epochs 5 --train-size 5000
 """
 
