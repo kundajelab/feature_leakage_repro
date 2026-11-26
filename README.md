@@ -2,7 +2,7 @@
 
 Code, environments and notebooks for the figures of
 *"Multi-task sequence-to-omics models learn spurious off-target predictive motif
-associations across cell contexts"* (Obbad, Nair, Min, Noble, Schreiber, Kundaje; 2026).
+associations across cell contexts"* (Obbad, Nair, Min, Daniels, Noble, Schreiber, Kundaje; 2026).
 
 Multi-task sequence models (DeepSEA/Beluga, Enformer, Borzoi, AlphaGenome) assign
 biologically implausible effects to well-understood motifs in off-target cell contexts,
