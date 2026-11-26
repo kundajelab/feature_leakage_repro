@@ -7,6 +7,12 @@ newhead[_fos]_attribution_logos.{pdf,png,svg} and newhead[_fos]_finetune_stats.t
 Run (env: featleak-dl):
     python run_newhead_finetune.py --new-head oct4
     python run_newhead_finetune.py --new-head fos
+    python run_newhead_finetune.py --new-head fos --seed 1 --suffix _seed1
+
+--seed sets the data sampling, weight initialisation and shuffling for one draw of
+the procedure. GPU convolution kernels are not bit-reproducible, so repeated runs
+of the same seed give close but not identical numbers; the panel reports a single
+draw, as stated in the Methods.
 """
 
 from __future__ import annotations
@@ -85,6 +91,7 @@ def build_data():
 OUT = Path(__file__).parent / "outputs"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BASE_PROP = 0.2          # background proportion for the leaky base model
+CTRL_PROP = 0.1          # background proportion for the single-task control
 FT_EPOCHS = 8            # fine-tune epochs on the new head
 FT_LR = 1e-4             # gentle full fine-tune
 N_MARG = 1000            # background loci for motif marginalization
@@ -242,11 +249,18 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--new-head", choices=list(NEWHEAD), default="oct4",
                     help="which new task head to add and fine-tune")
+    ap.add_argument("--seed", type=int, default=SEED,
+                    help="random seed for training and sampling")
+    ap.add_argument("--suffix", default=None,
+                    help="extra suffix for output filenames")
     args = ap.parse_args()
     cfg = NEWHEAD[args.new_head]
+    if args.suffix:
+        cfg = dict(cfg, suffix=cfg["suffix"] + args.suffix)
 
+    globals()["SEED"] = args.seed
     OUT.mkdir(exist_ok=True)
-    torch.manual_seed(SEED); np.random.seed(SEED)
+    torch.manual_seed(args.seed); np.random.seed(args.seed)
     log: list[str] = []
 
     hg38, peaks, labels, background = build_data()
@@ -279,13 +293,17 @@ def main() -> None:
     model = finetune_on_new_head(model, new_idx, pos_ft, neg_ft, log)
 
     # --- 3b. single-task control model trained FROM SCRATCH on the same task -
-    # (no shared multitask trunk -> the reference for how much the trunk leaks).
+    # Trained on the task's own peaks plus GC-matched background, with no shared
+    # multitask trunk: the reference for how much the trunk contributes.
     # Only for the FOS direction; see NEWHEAD note on single_task_control.
     st_model = st_auc = leak_st = None
     if cfg["single_task_control"]:
-        print(f"[3b] training single-task {cfg['task_name']} model from scratch ...")
-        st_model, st_auc = train_singletask_model(peaks, labels, background, hg38,
-                                                  task_idx=col, relative_proportion=BASE_PROP,
+        print(f"[3b] training single-task {cfg['task_name']} model from scratch "
+              f"on {cfg['task_name']}-only peaks ...")
+        own = labels[:, col] == 1
+        st_model, st_auc = train_singletask_model(peaks[own], labels[own], background,
+                                                  hg38, task_idx=col,
+                                                  relative_proportion=CTRL_PROP,
                                                   device=DEVICE, random_state=SEED)
 
     # --- 4. does the OTHER factor's motif leak into the new head? -----------
@@ -298,6 +316,13 @@ def main() -> None:
     legit_new = motif_effect(model, bg_marg, cfg["legit_motif"], task_idx=new_idx)             # legit signal
 
     newhead_auc = auc_for_head(model, pos_eval, neg_eval, head_idx=new_idx)
+
+    # Per-background marginalization effects, for replotting without refitting.
+    arrays = dict(leak_own=np.asarray(leak_own), leak_orig=np.asarray(leak_orig),
+                  leak_new=np.asarray(leak_new), legit_new=np.asarray(legit_new))
+    if st_model is not None:
+        arrays["leak_singletask"] = np.asarray(leak_st)
+    np.savez(OUT / f"newhead{cfg['suffix']}_marginalization_effects.npz", **arrays)
 
     def stat(x, alt):
         x = np.asarray(x)
@@ -322,7 +347,8 @@ def main() -> None:
         p_st_ne = min(wilcoxon(leak_st, alternative="greater").pvalue,
                       wilcoxon(leak_st, alternative="less").pvalue) * 2   # 2-sided != 0
         lines.append(
-            f"{ln} effect on SINGLE-TASK {tn} (from scratch):           median={m_st:+.3f}  mean={mean_st:+.3f}  "
+            f"{ln} effect on SINGLE-TASK {tn} ({tn} peaks only, from scratch): "
+            f"median={m_st:+.3f}  mean={mean_st:+.3f}  "
             f"Wilcoxon(!=0) p={p_st_ne:.2e}   <-- from-scratch control")
     lines += [
         f"{cfg['legit_name']} effect on NEW {tn} head (legit ctrl): median={m_ctrl:+.3f}  Wilcoxon(>0) p={p_ctrl:.2e}",
@@ -344,7 +370,8 @@ def main() -> None:
     cols = ["#55A868", "#8172B3", "#C44E52"]
     if leak_st is not None:
         data.append(leak_st)
-        xlab.append(f"{ld} motif effect on\n{tn} ChIP-seq task\n(single-task, from scratch)")
+        xlab.append(f"{ld} motif effect on\n{tn} ChIP-seq task\n"
+                    f"(single-task, {tn} peaks only,\nfrom scratch)")
         cols.append("#DD8452")
     data.append(legit_new)
     xlab.append(f"{gd} motif effect on\n{tn} ChIP-seq task\n(after finetuning)")

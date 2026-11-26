@@ -109,7 +109,7 @@ def get_model(num_tasks=2, inp_len=300, num_filt=128, num_layers=6, kernel_size=
     
     return tf.keras.Model(inputs=inp, outputs=output)
 
-# TODO: marginalization code to calculate how insertion of a motif effects the output
+# Marginalization: how inserting a motif changes the model output.
 def run_marginalizations(model, sequence_list, motif, num_inserts = 1, task_idx=1, 
                             control=True, batchsize=32):
     """Run the marginalization experiment on the DeepSEA model.

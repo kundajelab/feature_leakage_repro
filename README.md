@@ -27,9 +27,10 @@ feature_leakage_repro/
   env/                 conda environment specifications
   data/                small input files shipped with the repo + data provenance
   models/              model weights (download instructions in models/README.md)
-  figures/figureN/     Figures 1–6: scripts, notebooks, README
+  figures/figureN/     Figures 1–7: scripts, notebooks, README
   experiments/
     ag_deleak_finetune/  Figure 7: ChromBPNet-gated fine-tuning of AlphaGenome
+                         (figures/figure7/README.md points here)
     tf_chip_leakage/     Supplementary Fig. 2e–g: REST ChIP-seq, AlphaGenome vs BPNet
   tools/               rendering helpers
 ```
@@ -104,7 +105,7 @@ ENCFF302JEV, the ChromBPNet model trained on ENCSR000EPO, and enhancers from its
 | 2 | c, d | `figure2/run_tracks_dermis.py` → `run_tracks_matched.py` | agtorch / dl |
 | 3 | b–g | `figure3/notebooks/train_ap_1_counting.ipynb`; script `figure3/run.py` | dl |
 | 4 | a, c | `figure4/notebooks/analysis_3.ipynb`; scripts `figure4/run_experiment.py`, `run_modisco.py` | dl |
-| 4 | b | `figure4/notebooks/panel_b_modisco_keras.ipynb` | tf |
+| 4 | b | `figure4/run_modisco_keras.py`; notebook `figure4/notebooks/panel_b_modisco_keras.ipynb` | tf |
 | 5 | b | `figure5/notebooks/simulation_analysis.ipynb`; script `figure5/run_simulation.py` | dl |
 | 5 | d, e | `figure5/notebooks/feature_entanglement.ipynb`; script `figure5/run_entanglement.py` | dl |
 | 6 | b–d | `figure6/run_design.py` → `run_plots.py`, `run_panel_c.py`; notebook `figure6/notebooks/analysis_2.ipynb` | dl |

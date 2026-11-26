@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 """Train a multi-task CNN on simulated motif sequences and measure per-motif leakage onto inactive tasks (Figure 5A/B, Supplementary a).
 
+The defaults put the model in the data-limited regime that genomic training sets occupy:
+5,000 sequences for 100 motifs across 50 tasks. Training runs to convergence with early
+stopping on validation loss and the best checkpoint is restored before measurement.
+
 Outputs (outputs/): leakage_effect_size_correlation.pdf, effect_size_correlation.pdf,
 simulation_metrics.csv, model_trained.pth, motif_dict_trained.pkl.
 
 Run (env: featleak-dl):
-    python run_simulation.py --n-samples 10000 --seed 1
+    python run_simulation.py --seed 1
 """
 
 from __future__ import annotations
@@ -36,9 +40,13 @@ def main() -> None:
     ap.add_argument("--num-motifs", type=int, default=100)
     ap.add_argument("--motif-length", type=int, default=10)
     ap.add_argument("--num-tasks", type=int, default=50) 
-    ap.add_argument("--n-samples", type=int, default=10000)
-    ap.add_argument("--epochs", type=int, default=150)
+    ap.add_argument("--n-samples", type=int, default=5000)
+    ap.add_argument("--epochs", type=int, default=600,
+                    help="maximum epochs; training stops early on --patience.")
+    ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--patience", type=int, default=46,
+                    help="epochs without a validation improvement before stopping.")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     args = ap.parse_args()
@@ -54,12 +62,14 @@ def main() -> None:
     sequences, labels = H.generate_dataset(
         motif_dict, args.n_samples, num_tasks=args.num_tasks
     )
-    train_loader, val_loader, _ = H.create_dataloaders(sequences, labels)
+    train_loader, val_loader, _ = H.create_dataloaders(sequences, labels,
+                                                       batch_size=args.batch_size)
 
     print("[2/4] training multi-task CNN ...")
     model, train_losses, val_losses = H.train_simple_model(
         train_loader, val_loader, num_tasks=args.num_tasks,
         num_epochs=args.epochs, lr=args.lr, device=args.device,
+        patience=args.patience,
     )
     print(f"    min val loss = {min(val_losses):.3f}")
     torch.save(model.state_dict(), OUT / "model_trained.pth")

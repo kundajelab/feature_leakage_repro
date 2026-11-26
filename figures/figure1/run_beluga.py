@@ -50,15 +50,15 @@ def dnase_task_indices():
 def ablation_effect(model, fimo_key, motif_len, dnase_idx, sample_size):
     """Per-DNase-task effect for each affinity quartile via motif ablation.
 
-    Uses tangermeme.ablate.ablate (n=20 mononucleotide shuffles of the central
-    motif window), exactly as the paper's Methods describe. This matters: a
-    dinucleotide shuffle of a short (<=~10 bp) window is often a no-op and
-    silently produces a zero effect (the AP-1 bug).
+    Uses tangermeme.ablate.ablate with 20 mononucleotide shuffles of the central
+    motif window, as described in the Methods. Mononucleotide shuffling is used
+    because a dinucleotide shuffle of a window of about 10 bp or shorter often
+    returns the window unchanged, which would register as a zero effect.
     """
     quartiles = sample_loci_by_affinity(config.resolve(fimo_key, must_exist=True),
                                         sample_size=sample_size, num_groups=4)
-    # Fixed central window covering the motif core (>= motif_len, matches the
-    # original 995-1005 = 10 bp used for Beluga's 2000 bp input).
+    # Fixed central window covering the motif core: at least motif_len, and at
+    # least the 10 bp (995-1005) used for Beluga's 2,000 bp input.
     half = max(motif_len, 10) // 2
     a0, a1 = WIN // 2 - half, WIN // 2 + half
     results = []

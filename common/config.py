@@ -63,7 +63,7 @@ _REGISTRY: dict[str, list[str]] = {
         f"{LEGACY_ROOT}/SEI/model/sei.pth",
     ],
     # ChromBPNet, cardiac fibroblast (ENCSR000ENH)
-    "chrombpnet_fibroblast": [
+    "chrombpnet_cardiac_fibroblast": [
         f"{MODELS_ROOT}/chrombpnet/ENCSR000ENH_chrombpnet_wo_bias.h5",
         f"{LEGACY_ROOT}/alphagenome/chrombpnet_wo_bias.h5",
         f"{OAK_ROOT}/projects/chromatin-atlas-2022/DNASE/ENCSR000ENH/"
@@ -112,6 +112,11 @@ _REGISTRY: dict[str, list[str]] = {
     "beluga_task_names": [
         f"{DATA_DIR}/beluga/deepsea_beluga_names.txt",
         f"{LEGACY_ROOT}/all_ap1_motifs/deepsea_beluga_names.txt",
+    ],
+    # Keras models and labelled peaks for the Fig. 4b attribution/TF-MoDISco run
+    "keras_fibr_ipsc_dir": [f"{LEGACY_ROOT}/fibr_ipsc_peaks"],
+    "keras_multitask_model": [
+        f"{LEGACY_ROOT}/fibr_ipsc_peaks/models/balanced_multitask_model.h5",
     ],
     # JASPAR 2022 CORE vertebrates (MEME format)
     "jaspar_meme": [

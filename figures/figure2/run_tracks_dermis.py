@@ -42,6 +42,9 @@ def main() -> None:
     ap.add_argument("--model", choices=["chrombpnet", "alphagenome"], required=True)
     ap.add_argument("--locus", required=True, help="chrom:start:end of the enhancer")
     ap.add_argument("--tag", default="dermis")
+    ap.add_argument("--seq-len", type=int, default=524288,
+                    help="AlphaGenome input length (bp); ignored for ChromBPNet, "
+                         "whose input is fixed at 2,114 bp.")
     args = ap.parse_args()
     chrom, s, e = args.locus.split(":")
     mid_g = (int(s) + int(e)) // 2
@@ -64,7 +67,7 @@ def main() -> None:
         name, ylabel = "ChromBPNet (dermis)", "expected counts / bp"
     else:
         from alphagenome_pytorch import AlphaGenome
-        W = 524288
+        W = args.seq_len
         model = AlphaGenome.from_pretrained(
             str(config.resolve("alphagenome_pytorch_weights", must_exist=True)), device="cuda")
         q = str(fa[chrom][mid_g - W // 2:mid_g + W // 2]).upper()
@@ -80,7 +83,8 @@ def main() -> None:
                 out = model.predict(x.cuda(), organism_index=0)
             return out["dnase"][1][0, W // 2 - HALF:W // 2 + HALF, AG_CH].float().cpu().numpy()
         bp = np.arange(2 * HALF) - HALF
-        name, ylabel = "AlphaGenome (CL:0002551 dermis)", "predicted DNase"
+        name = f"AlphaGenome (CL:0002551 dermis, {W:,} bp input)"
+        ylabel = "predicted DNase"
 
     profiles = np.stack([profile(insert(q, OFFSETS[:k], W // 2)) for k in range(5)])
     np.savez(OUT / f"{args.model}_track_data_{args.tag}.npz", profiles=profiles, bp=bp,

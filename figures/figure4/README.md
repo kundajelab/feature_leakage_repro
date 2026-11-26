@@ -12,7 +12,7 @@ background regions are shipped in `data/figure4/`.
 | notebook | panels |
 |---|---|
 | `notebooks/analysis_3.ipynb` | 4a (ISM), 4c, Supp 4a–e |
-| `notebooks/panel_b_modisco_keras.ipynb` | 4b: TensorFlow/Keras models, gradient × input → TF-MoDISco (env `featleak-tf`) |
+| `run_modisco_keras.py` | 4b: gradient × input on the FOS output logit → TF-MoDISco (env `featleak-tf`); notebook version in `notebooks/panel_b_modisco_keras.ipynb` |
 
 Fig. 4c asterisks: two-sided Mann–Whitney U test, single- vs multi-task model at each
 background fraction, Benjamini–Hochberg across the four fractions.

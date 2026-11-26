@@ -58,7 +58,7 @@ def load_chrombpnet(which: str = "fibroblast", device: str | None = None,
     """Load a ChromBPNet DNase model via bpnet-lite.
 
     Args:
-        which: one of ``fibroblast`` (ENCSR000ENH), ``encsr000eor``,
+        which: one of ``cardiac_fibroblast`` (ENCSR000ENH), ``encsr000eor``,
             ``encsr128gbn`` — resolved through :mod:`common.config`.
         count_wrapper: wrap in ``CountWrapper`` (scalar total-count output),
             as used by the ablation/marginalization effect-size code.
@@ -66,7 +66,7 @@ def load_chrombpnet(which: str = "fibroblast", device: str | None = None,
     from bpnetlite.bpnet import BPNet, CountWrapper
 
     key = {
-        "fibroblast": "chrombpnet_fibroblast",
+        "cardiac_fibroblast": "chrombpnet_cardiac_fibroblast",
         "encsr000eor": "chrombpnet_encsr000eor",
         "encsr128gbn": "chrombpnet_encsr128gbn",
     }[which]

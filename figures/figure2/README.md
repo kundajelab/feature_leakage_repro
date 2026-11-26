@@ -4,7 +4,7 @@ All models read the same ENCODE DNase-seq experiment, ENCSR000EPO (fibroblast of
 
 | model | output | input |
 |---|---|---|
-| AlphaGenome (PyTorch port, all-folds v1) | DNase track CL:0002551 | 524,288 bp |
+| AlphaGenome (PyTorch port, all-folds v1) | DNase track CL:0002551 | 524,288 bp (16,384 bp for panels c, d) |
 | Enformer (gReLU `human`) | DNase task ENCFF302JEV | 196,608 bp |
 | Borzoi (gReLU `human_fold0`) | DNase task ENCFF302JEV | 524,288 bp |
 | ChromBPNet (bias-corrected, fold 0) | count head (total counts over 1,000 bp) | 2,114 bp |
@@ -42,11 +42,15 @@ CUDA_VISIBLE_DEVICES=0 python run_raw_chrombpnet.py                  # featleak-
 python plot_raw_insertion.py                                         # featleak-dl; also writes raw_insertion_summary.csv
 
 # Fig 2c, d: one enhancer with 0-4 OCT-SOX insertions
-python run_tracks_dermis.py --model alphagenome --locus chr6:162964880:162965140   # featleak-agtorch
-python run_tracks_dermis.py --model chrombpnet  --locus chr6:162964880:162965140   # featleak-dl
-python run_tracks_matched.py --cbp-tag dermis --ag-tag dermis --suffix _dermis
+LOCUS=chr8:104659580:104659820
+TAG=chr8_104659580_16k
+python run_tracks_dermis.py --model alphagenome --locus $LOCUS --seq-len 16384 --tag $TAG  # featleak-agtorch
+python run_tracks_dermis.py --model chrombpnet  --locus $LOCUS --tag $TAG                 # featleak-dl
+python run_tracks_matched.py --cbp-tag $TAG --ag-tag $TAG --suffix _dermis16k_chr8
 ```
 
 In panels c and d, OCT–SOX is inserted cumulatively at −150, +150, −200 and +200 bp;
 AlphaGenome shows the CL:0002551 profile and ChromBPNet the base-resolution expected counts
 (profile probabilities × predicted total counts), over ±500 bp around the enhancer centre.
+AlphaGenome reads a 16,384 bp window here, so that both models receive a comparable amount
+of sequence context around the enhancer.

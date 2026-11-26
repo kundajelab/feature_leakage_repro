@@ -11,9 +11,13 @@ the greedy substitution.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python run_design.py --n-sequences 500 --y-target 6   # designs (slow; GPU)
-python run_plots.py --results outputs/all_results.pkl                        # panels b, d; Supp 6
-CUDA_VISIBLE_DEVICES=0 python run_panel_c.py --results outputs/all_results.pkl   # panel c (DeepSHAP)
+python run_plots.py                                                          # panels b, d; Supp 6
+CUDA_VISIBLE_DEVICES=0 python run_panel_c.py                                 # panel c (DeepSHAP)
 ```
+
+`outputs/all_results.pkl` holds the 500-sequence design run shown in the figure, so the
+panel scripts can be run without repeating the design step. `run_design.py` regenerates it;
+pass `--results` or set `FEATLEAK_FIG6_RESULTS` to plot a different run.
 
 | Panel | Output |
 |---|---|

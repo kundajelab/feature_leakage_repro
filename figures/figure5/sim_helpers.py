@@ -236,7 +236,7 @@ def generate_simple_dataset(motif_dict, num_samples, sequence_length=200, num_ta
     return sequences, labels
 
 
-def train_simple_model(train_loader, val_loader, num_tasks=10, num_epochs=100, lr=1e-3, device='cpu', patience = 10):
+def train_simple_model(train_loader, val_loader, num_tasks=10, num_epochs=100, lr=1e-3, device='cpu', patience=10, min_delta=1e-4):
     """
     Simple training function for the PyTorch model.
     
@@ -247,9 +247,12 @@ def train_simple_model(train_loader, val_loader, num_tasks=10, num_epochs=100, l
         num_epochs: Number of training epochs
         lr: Learning rate
         device: Device to train on
-    
+        patience: stop after this many epochs without a validation improvement
+        min_delta: smallest validation-loss decrease counted as an improvement
+
     Returns:
-        model, train_losses, val_losses
+        model, train_losses, val_losses. The returned model carries the weights
+        from the epoch with the lowest validation loss.
     """
     model = MotifEffectSum(num_tasks=num_tasks).to(device)
     criterion = nn.MSELoss()
@@ -258,6 +261,7 @@ def train_simple_model(train_loader, val_loader, num_tasks=10, num_epochs=100, l
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
+    best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
     epochs_without_improvement = 0
     for epoch in range(num_epochs):
         # Training
@@ -290,16 +294,19 @@ def train_simple_model(train_loader, val_loader, num_tasks=10, num_epochs=100, l
         val_losses.append(val_loss)
         
         print(f"Epoch {epoch+1:2d}: Train = {train_loss:.4f}, Val = {val_loss:.4f}")
-        if val_loss < best_val_loss:
+        if val_loss < best_val_loss - min_delta:
             best_val_loss = val_loss
+            best_state = {k: v.detach().cpu().clone()
+                          for k, v in model.state_dict().items()}
             epochs_without_improvement = 0
         else:
             epochs_without_improvement += 1
         if epochs_without_improvement >= patience:
             print(f"Early stopping at epoch {epoch+1}")
-
+            model.load_state_dict(best_state)
             return model, train_losses, val_losses
 
+    model.load_state_dict(best_state)
     return model, train_losses, val_losses
 
 

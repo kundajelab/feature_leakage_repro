@@ -33,14 +33,13 @@ from common.models import load_beluga, beluga_task_index  # noqa: E402
 
 OUT = Path(__file__).parent / "outputs"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-LEGACY = os.environ.get("FEATLEAK_FIG6_RESULTS",
-                        "/users/kobbad/feat_leakage/sequence_design/all_results_new.pkl")
+RESULTS = os.environ.get("FEATLEAK_FIG6_RESULTS", str(OUT / "all_results.pkl"))
 BASES = "ACGT"
 
 
 def default_results() -> str:
-    local = OUT / "all_results.pkl"
-    return str(local) if local.exists() else LEGACY
+    """The design run in outputs/, overridable with FEATLEAK_FIG6_RESULTS."""
+    return RESULTS
 
 
 def one_hot(seq: str) -> np.ndarray:

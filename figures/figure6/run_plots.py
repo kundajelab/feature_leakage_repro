@@ -23,16 +23,11 @@ matplotlib.rcParams["pdf.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 
 OUT = Path(__file__).parent / "outputs"
-# Legacy precomputed design run (Kundaje-lab machine). Overridable via
-# FEATLEAK_FIG6_RESULTS; a local run_design.py output is preferred when present.
-LEGACY_RESULTS = os.environ.get(
-    "FEATLEAK_FIG6_RESULTS", "/users/kobbad/feat_leakage/sequence_design/all_results_new.pkl")
 
 
 def default_results() -> str:
-    """Prefer a local run_design.py output, else the legacy precomputed pickle."""
-    local = OUT / "all_results.pkl"
-    return str(local) if local.exists() else LEGACY_RESULTS
+    """The design run in outputs/, overridable with FEATLEAK_FIG6_RESULTS."""
+    return os.environ.get("FEATLEAK_FIG6_RESULTS", str(OUT / "all_results.pkl"))
 
 
 def _traj(r, key):
@@ -112,7 +107,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default=default_results(),
                     help="path to a greedy-design results pickle "
-                         "(default: outputs/all_results.pkl if present, else the legacy run)")
+                         "(default: outputs/all_results.pkl)")
     args = ap.parse_args()
     OUT.mkdir(exist_ok=True)
     with open(args.results, "rb") as fh:

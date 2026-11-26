@@ -73,6 +73,29 @@ class CNNModel(nn.Module):
         return logits
 
 
+def _seed_rngs(seed):
+    """Seed torch/numpy reproducibly and return the caller's previous RNG states.
+
+    Seeding the global generators in place would make every later random draw in
+    the calling script depend on how much randomness this function consumed, so
+    the previous state is captured here and restored by ``_restore_rngs``.
+    """
+    prev = (torch.get_rng_state(), np.random.get_state(),
+            torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None)
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    return prev
+
+
+def _restore_rngs(prev):
+    """Put back the RNG states captured by ``_seed_rngs``."""
+    torch_state, numpy_state, cuda_state = prev
+    torch.set_rng_state(torch_state)
+    np.random.set_state(numpy_state)
+    if cuda_state is not None:
+        torch.cuda.set_rng_state_all(cuda_state)
+
+
 def train_multitask_model(peak_regions, labels, background_regions, genome_path, 
                          relative_proportion=0.2, test_split=0.2, val_split=0.2,
                          epochs=5, batch_size=64, lr=0.001, patience=5, 
@@ -94,11 +117,14 @@ def train_multitask_model(peak_regions, labels, background_regions, genome_path,
         patience: early stopping patience
         min_delta: minimum improvement for early stopping
         device: 'cuda' or 'cpu'
-        random_state: random seed
-        
+        random_state: random seed; also seeds weight initialisation and
+            batch shuffling, so a given seed reproduces the fit exactly.
+
     Returns:
         trained model
     """
+    _prev_rng = _seed_rngs(random_state)
+
     # Sample background regions
     n_background = int(peak_regions.shape[0] * relative_proportion)
     background_sample = background_regions.sample(n=n_background, random_state=random_state)
@@ -203,6 +229,7 @@ def train_multitask_model(peak_regions, labels, background_regions, genome_path,
     
     auc = evaluate_auc_multitask(model, X_test, y_test, task_idx=0, device=device)
     
+    _restore_rngs(_prev_rng)
     return model, auc
 
 
@@ -228,11 +255,14 @@ def train_singletask_model(peak_regions, labels, background_regions, genome_path
         patience: early stopping patience
         min_delta: minimum improvement for early stopping
         device: 'cuda' or 'cpu'
-        random_state: random seed
-        
+        random_state: random seed; also seeds weight initialisation and
+            batch shuffling, so a given seed reproduces the fit exactly.
+
     Returns:
         trained model
     """
+    _prev_rng = _seed_rngs(random_state)
+
     # Sample background regions
     n_background = int(peak_regions.shape[0] * relative_proportion)
     background_sample = background_regions.sample(n=n_background, random_state=random_state)
@@ -337,6 +367,7 @@ def train_singletask_model(peak_regions, labels, background_regions, genome_path
     
     auc = evaluate_auc_singletask(model, X_test, y_test, device=device)
     
+    _restore_rngs(_prev_rng)
     return model, auc
 
 

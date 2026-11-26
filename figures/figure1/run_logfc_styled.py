@@ -33,6 +33,17 @@ OUT = Path(__file__).parent / "outputs"
 EPS = 1e-3
 
 
+def sig_stars(p: float) -> str:
+    """Significance marker: *** p < 0.001, ** p < 0.01, * p < 0.05, else 'n.s.'."""
+    if p < 1e-3:
+        return "***"
+    if p < 1e-2:
+        return "**"
+    if p < 0.05:
+        return "*"
+    return "n.s."
+
+
 def styled_box(logfc, label, outstem, ylim=None):
     p_less = stats.wilcoxon(logfc, alternative="less").pvalue
     p_two = stats.wilcoxon(logfc).pvalue
@@ -46,15 +57,15 @@ def styled_box(logfc, label, outstem, ylim=None):
     ax.set_ylabel("OCT-SOX effect  (log2FC, with motif / ablated)")
     if ylim is not None:
         ax.set_ylim(*ylim)
-    if p_less < 0.05:
-        ax.set_title("*", fontsize=16)
+    ax.set_title(sig_stars(p_less), fontsize=16)
     ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
     fig.tight_layout()
     fig.savefig(OUT / f"{outstem}.pdf")
     plt.close(fig)
     print(f"{label}: n={len(logfc)} median log2FC={np.median(logfc):+.4f} "
           f"mean={logfc.mean():+.4f} | Wilcoxon repressive(one-sided) p={p_less:.3g} | "
-          f"two-sided p={p_two:.3g} -> {outstem}.pdf")
+          f"two-sided p={p_two:.3g} | marker={sig_stars(p_less)} "
+          f"-> {outstem}.pdf")
     return p_less
 
 
