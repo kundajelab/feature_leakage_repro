@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it using the metadata below."
+title: "Feature leakage in multi-task sequence-to-omics models: code to reproduce the figures"
+type: software
+authors:
+  - family-names: Obbad
+    given-names: Kamal
+    affiliation: Stanford University
+  - family-names: Nair
+    given-names: Surag
+    affiliation: Stanford University
+  - family-names: Min
+    given-names: Alan
+    affiliation: University of Washington
+  - family-names: Daniels
+    given-names: Kyle
+    affiliation: Stanford University
+  - family-names: Noble
+    given-names: William S.
+    affiliation: University of Washington
+  - family-names: Schreiber
+    given-names: Jacob
+    affiliation: University of Massachusetts
+  - family-names: Kundaje
+    given-names: Anshul
+    affiliation: Stanford University
+repository-code: "https://github.com/kundajelab/feature_leakage_repro"
+license: MIT
